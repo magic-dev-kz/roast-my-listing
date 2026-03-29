@@ -554,6 +554,50 @@ body {
   .comparison-wrap { grid-template-columns: 1fr; }
   .history-item { padding: var(--space-2) var(--space-3); }
 }
+/* Feedback Widget */
+.feedback-widget {
+  text-align: center; padding: var(--space-4); margin-top: var(--space-8);
+  opacity: 0; transition: opacity .4s ease;
+}
+.feedback-widget.visible { opacity: 1; }
+.feedback-question {
+  font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-3);
+}
+.feedback-buttons { display: flex; justify-content: center; gap: var(--space-3); }
+.feedback-btn {
+  background: transparent; border: 1px solid var(--surface-raised); color: var(--text-muted);
+  padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm);
+  font-size: var(--text-sm); font-family: var(--font-main); cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.feedback-btn:hover { border-color: var(--ember); color: var(--text); }
+.feedback-btn:active { transform: scale(0.95); }
+.feedback-btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+.feedback-thanks {
+  font-size: var(--text-sm); color: var(--text-muted); margin-top: var(--space-3);
+}
+/* Feedback Stats */
+.feedback-stats-section {
+  margin-top: var(--space-6); padding-top: var(--space-4);
+  border-top: 1px solid rgba(68,64,60,.4);
+}
+.feedback-stats-title {
+  font-size: var(--text-sm); font-weight: 700; color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+.feedback-stats-row {
+  display: flex; justify-content: center; gap: var(--space-6);
+  font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-3);
+}
+.feedback-stats-row span { font-weight: 600; }
+.copy-feedback-btn {
+  background: transparent; border: 1px solid var(--surface-raised); color: var(--text-muted);
+  padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm);
+  font-size: var(--text-xs); font-family: var(--font-main); cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.copy-feedback-btn:hover { border-color: var(--ember); color: var(--text); }
+.copy-feedback-btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
 .openclaw-footer {
   text-align: center;
   padding: 24px 16px;
@@ -643,6 +687,14 @@ body {
         <button type="button" class="settings-change-btn" id="settings-change" aria-label="Change API key">Change</button>
         <button type="button" class="settings-close-btn" id="settings-close" aria-label="Close settings">Close</button>
       </div>
+      <div class="feedback-stats-section" id="feedback-stats-section" style="display:none">
+        <p class="feedback-stats-title">Feedback Stats</p>
+        <div class="feedback-stats-row">
+          <span>&#128077; <span id="feedback-yes-count">0</span></span>
+          <span>&#128078; <span id="feedback-no-count">0</span></span>
+        </div>
+        <button type="button" class="copy-feedback-btn" id="copy-feedback-btn">Copy Feedback (JSON)</button>
+      </div>
     </div>
     <div class="input-section">
       <label class="field-label" for="platform-select">Platform</label>
@@ -697,6 +749,14 @@ body {
       </div>
     </div>
     <div class="result-section" id="result-content"></div>
+    <div class="feedback-widget" id="feedback-widget" style="display:none">
+      <p class="feedback-question">Was this roast helpful?</p>
+      <div class="feedback-buttons" id="feedback-buttons">
+        <button type="button" class="feedback-btn feedback-yes" data-vote="yes">&#128077; Yes</button>
+        <button type="button" class="feedback-btn feedback-no" data-vote="no">&#128078; Not really</button>
+      </div>
+      <p class="feedback-thanks" id="feedback-thanks" style="display:none">Thanks for the feedback!</p>
+    </div>
   </section>
 </div>
 
@@ -1658,7 +1718,134 @@ body {
     }
   }
 
+  // === Feedback Widget Logic ===
+  var feedbackTimerId = null;
+  var currentRoastId = '';
+
+  function getRoastId(platform, score) {
+    return platform + '_' + score + '_' + Date.now();
+  }
+
+  function getFeedbackData() {
+    try { return JSON.parse(localStorage.getItem('rml_feedback') || '[]'); } catch(e) { return []; }
+  }
+
+  function saveFeedbackData(data) {
+    try { localStorage.setItem('rml_feedback', JSON.stringify(data)); } catch(e) {}
+  }
+
+  function hasVotedForRoast(roastId) {
+    var data = getFeedbackData();
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].roastId === roastId) return true;
+    }
+    return false;
+  }
+
+  function showFeedbackWidget(platform, score) {
+    var widget = $('#feedback-widget');
+    var btns = $('#feedback-buttons');
+    var thanks = $('#feedback-thanks');
+    if (!widget) return;
+
+    currentRoastId = getRoastId(platform, score);
+
+    // Reset state
+    widget.style.display = 'none';
+    widget.classList.remove('visible');
+    btns.style.display = 'flex';
+    thanks.style.display = 'none';
+
+    if (feedbackTimerId) clearTimeout(feedbackTimerId);
+    feedbackTimerId = setTimeout(function() {
+      widget.style.display = 'block';
+      // Trigger reflow for CSS transition
+      void widget.offsetWidth;
+      widget.classList.add('visible');
+    }, 2000);
+  }
+
+  function hideFeedbackWidget() {
+    var widget = $('#feedback-widget');
+    if (widget) {
+      widget.style.display = 'none';
+      widget.classList.remove('visible');
+    }
+    if (feedbackTimerId) { clearTimeout(feedbackTimerId); feedbackTimerId = null; }
+  }
+
+  function handleFeedbackVote(vote) {
+    var btns = $('#feedback-buttons');
+    var thanks = $('#feedback-thanks');
+    if (btns) btns.style.display = 'none';
+    if (thanks) thanks.style.display = 'block';
+
+    var entry = {
+      vote: vote,
+      platform: state.lastPlatform || 'Unknown',
+      score: state.lastResult ? (parseInt(state.lastResult.score, 10) || 0) : 0,
+      timestamp: Date.now(),
+      roastId: currentRoastId
+    };
+    var data = getFeedbackData();
+    data.push(entry);
+    saveFeedbackData(data);
+    updateFeedbackStats();
+    announce('Thanks for the feedback!');
+  }
+
+  // Delegate click on feedback buttons
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.feedback-btn');
+    if (!btn) return;
+    var vote = btn.getAttribute('data-vote');
+    if (vote) handleFeedbackVote(vote);
+  });
+
+  function updateFeedbackStats() {
+    var data = getFeedbackData();
+    var yesCount = 0, noCount = 0;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].vote === 'yes') yesCount++;
+      else noCount++;
+    }
+    var section = $('#feedback-stats-section');
+    var yesEl = $('#feedback-yes-count');
+    var noEl = $('#feedback-no-count');
+    if (yesEl) yesEl.textContent = yesCount;
+    if (noEl) noEl.textContent = noCount;
+    if (section) section.style.display = data.length > 0 ? 'block' : 'none';
+  }
+
+  var copyFeedbackBtn = $('#copy-feedback-btn');
+  if (copyFeedbackBtn) {
+    copyFeedbackBtn.addEventListener('click', function() {
+      var data = getFeedbackData();
+      var json = JSON.stringify(data, null, 2);
+      copyText(json).then(function() {
+        copyFeedbackBtn.textContent = 'Copied!';
+        announce('Feedback data copied to clipboard');
+        setTimeout(function() { copyFeedbackBtn.textContent = 'Copy Feedback (JSON)'; }, 2000);
+      });
+    });
+  }
+
+  // Patch renderResult to trigger feedback widget
+  var _origRenderResult = renderResult;
+  renderResult = function(data) {
+    _origRenderResult(data);
+    showFeedbackWidget(state.lastPlatform, parseInt(data.score, 10) || 0);
+  };
+
+  // Patch showSection to hide feedback when leaving result
+  var _origShowSection = showSection;
+  showSection = function(id) {
+    if (id !== 'result') hideFeedbackWidget();
+    _origShowSection(id);
+  };
+
   init();
+  updateFeedbackStats();
 })();
 </script>
 <div class="openclaw-footer">
