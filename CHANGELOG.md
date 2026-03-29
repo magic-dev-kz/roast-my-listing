@@ -1,5 +1,15 @@
 # Roast My Listing — Changelog
 
+## v13.0 (2026-03-29) — SEO Keyword Hints
+
+### Added
+- **SEO keyword hints** -- after roast, a new card appears below platform tips showing 3-5 suggested keywords extracted from the listing text via simple word frequency analysis (most frequent nouns/adjectives, stopwords excluded); no AI required
+
+### Technical
+- SW cache bumped to `roast-v13`
+
+---
+
 ## v12.0 (2026-03-29) — Compare & Intensity
 
 ### Added
