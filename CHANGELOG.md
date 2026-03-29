@@ -1,5 +1,20 @@
 # Roast My Listing — Changelog
 
+## v6.0 (2026-03-29) — Skeleton Loader, Toasts & Polish
+### Added
+- **Skeleton Loader** — 3 pulsing placeholder blocks (score circle, roast lines, rewrite block) shown during loading instead of empty space
+- **Toast Notifications** — fixed-position toast system (bottom-right) with success/error/info variants, auto-dismiss after 3s
+  - Used for: copy success, API errors, photo upload success/error
+  - Replaces old centered photo-toast with unified toast component
+- **Example Chips** — "Try an example:" section with 4 clickable chips (Etsy Ring, Airbnb Apt, eBay Laptop, Amazon Charger) that prefill textarea and platform
+- **Result Cards Hover Glow** — subtle box-shadow glow + translateY lift on hover for score, roast, and rewrite cards
+
+### Changed
+- All `alert()` calls replaced with toast notifications
+- Photo toast replaced with global toast system
+- Copy feedback button uses toast notification
+- SW cache bumped to `roast-v6`
+
 ## v5.0 (2026-03-29) — Photo Upload & Multimodal Roast
 ### Added
 - **Photo Upload** — drag-and-drop zone + button to upload a product photo (JPG, PNG, WebP, max 5 MB)

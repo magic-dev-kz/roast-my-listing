@@ -666,6 +666,97 @@ body {
   font-size: var(--text-xs); color: var(--ember); background: rgba(249,115,22,.1);
   padding: 2px var(--space-2); border-radius: var(--radius-sm); margin-left: var(--space-2);
 }
+/* Skeleton Loader */
+@keyframes shimmerSkeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton-wrap { max-width: 640px; margin: 0 auto; }
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-raised) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmerSkeleton 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+.skeleton-score {
+  width: 120px; height: 120px; border-radius: 50%; margin: 0 auto var(--space-6);
+}
+.skeleton-roast { margin-bottom: var(--space-4); }
+.skeleton-roast-line { height: 18px; margin-bottom: var(--space-3); border-radius: var(--radius-sm); }
+.skeleton-roast-line:nth-child(1) { width: 85%; }
+.skeleton-roast-line:nth-child(2) { width: 70%; }
+.skeleton-roast-line:nth-child(3) { width: 90%; }
+.skeleton-rewrite { height: 140px; }
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+  display: flex; flex-direction: column-reverse; gap: var(--space-3);
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  background: var(--surface-raised); border-left: 3px solid var(--fire);
+  border-radius: 8px; padding: var(--space-3) var(--space-6);
+  color: var(--text); font-size: var(--text-sm); font-family: var(--font-main);
+  box-shadow: var(--shadow-lg); max-width: 340px; min-width: 220px;
+  animation: toastSlideIn .3s ease;
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.toast.toast-success { border-left-color: var(--score-high); }
+.toast.toast-error { border-left-color: var(--fire); }
+.toast.toast-info { border-left-color: var(--ember); }
+.toast.toast-out { animation: toastSlideOut .3s ease forwards; }
+@keyframes toastSlideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toastSlideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
+@media (max-width: 400px) {
+  .toast-container { bottom: 16px; right: 16px; left: 16px; }
+  .toast { max-width: 100%; min-width: unset; }
+}
+
+/* Example Chips */
+.example-chips-wrap { margin-bottom: var(--space-6); }
+.example-chips-label {
+  font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-3); font-weight: 600;
+}
+.example-chips {
+  display: flex; flex-wrap: wrap; gap: var(--space-2);
+}
+.example-chip {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--ember); border-radius: 20px;
+  background: rgba(249,115,22,.08); color: var(--ember);
+  font-size: var(--text-sm); font-family: var(--font-main);
+  cursor: pointer; transition: background .15s, color .15s, transform .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+.example-chip:hover {
+  background: var(--ember); color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(249,115,22,.25);
+}
+.example-chip:active { transform: scale(0.95); }
+.example-chip:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+/* Result cards hover glow */
+.score-card,
+.roast-card,
+.rewrite-card {
+  transition: box-shadow .3s ease, transform .3s ease;
+}
+.score-card:hover {
+  box-shadow: var(--shadow-lg), 0 0 24px rgba(239,68,68,.12);
+  transform: translateY(-2px);
+}
+.roast-card:hover {
+  box-shadow: var(--shadow-lg), 0 0 24px rgba(249,115,22,.12);
+  transform: translateY(-2px);
+}
+.rewrite-card:hover {
+  box-shadow: var(--shadow-lg), 0 0 24px rgba(34,197,94,.12);
+  transform: translateY(-2px);
+}
+
 .oc-footer{text-align:center;padding:20px 16px 24px;margin-top:24px}
 .oc-footer a{font-size:.78rem;color:var(--text-muted,var(--text-secondary,#888));text-decoration:none;opacity:.6;transition:opacity .2s}
 .oc-footer a:hover{opacity:1}
@@ -784,6 +875,16 @@ body {
         <input type="file" id="photo-file-input" accept="image/jpeg,image/png,image/webp" style="display:none" aria-hidden="true">
       </div>
 
+      <div class="example-chips-wrap">
+        <p class="example-chips-label">Try an example:</p>
+        <div class="example-chips" id="example-chips">
+          <button type="button" class="example-chip" data-example="etsy" aria-label="Try Etsy example">Etsy Ring</button>
+          <button type="button" class="example-chip" data-example="airbnb" aria-label="Try Airbnb example">Airbnb Apt</button>
+          <button type="button" class="example-chip" data-example="ebay" aria-label="Try eBay example">eBay Laptop</button>
+          <button type="button" class="example-chip" data-example="amazon" aria-label="Try Amazon example">Amazon Charger</button>
+        </div>
+      </div>
+
       <label class="field-label" for="listing-textarea">Your listing</label>
       <textarea id="listing-textarea" class="listing-textarea" placeholder="Paste your listing text here..." maxlength="10000" aria-describedby="char-counter"></textarea>
       <div class="char-counter" id="char-counter" aria-live="polite">0 / 10,000</div>
@@ -808,6 +909,15 @@ body {
         <div class="progress-fill" id="progress-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Roast progress"></div>
       </div>
       <p class="loading-phrase" id="loading-phrase" aria-live="polite"></p>
+      <div class="skeleton-wrap" id="skeleton-loader" style="margin-top:var(--space-8)">
+        <div class="skeleton skeleton-score"></div>
+        <div class="skeleton-roast">
+          <div class="skeleton skeleton-roast-line"></div>
+          <div class="skeleton skeleton-roast-line"></div>
+          <div class="skeleton skeleton-roast-line"></div>
+        </div>
+        <div class="skeleton skeleton-rewrite"></div>
+      </div>
     </div>
   </section>
 
@@ -849,6 +959,7 @@ body {
 </div>
 
 <div aria-live="polite" id="aria-announcer" class="sr-only"></div>
+<div class="toast-container" id="toast-container"></div>
 
 <script>
 (function() {
@@ -864,6 +975,23 @@ body {
   function $(s) { return document.querySelector(s); }
   function $$(s) { return document.querySelectorAll(s); }
   function announce(m) { var e=$('#aria-announcer'); if(e){e.textContent='';setTimeout(function(){e.textContent=m;},100);} }
+
+  // === Toast Notifications ===
+  function showToast(msg, type) {
+    type = type || 'info';
+    var container = $('#toast-container');
+    if (!container) return;
+    var toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.textContent = msg;
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    container.appendChild(toast);
+    setTimeout(function() {
+      toast.classList.add('toast-out');
+      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+    }, 3000);
+  }
 
   function copyText(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1038,13 +1166,7 @@ body {
   var PHOTO_MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
   function showPhotoToast(msg) {
-    var existing = document.querySelector('.photo-toast');
-    if (existing) existing.remove();
-    var toast = document.createElement('div');
-    toast.className = 'photo-toast';
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 3000);
+    showToast(msg, 'error');
   }
 
   function formatFileSize(bytes) {
@@ -1078,6 +1200,7 @@ body {
       photoEmptyState.style.display = 'none';
       photoPreviewState.style.display = 'block';
       photoZone.classList.add('has-photo');
+      showToast('Photo uploaded: ' + file.name, 'success');
       announce('Photo uploaded: ' + file.name);
     };
     reader.readAsDataURL(file);
@@ -1142,6 +1265,28 @@ body {
     if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
       handlePhotoFile(e.dataTransfer.files[0]);
     }
+  });
+
+  // === Example Chips ===
+  var EXAMPLE_LISTINGS = {
+    etsy: { platform: 'Etsy', text: 'Handmade silver ring\n\nBeautiful ring. Very nice. Good quality silver. Size 7. Ships fast. Buy now!' },
+    airbnb: { platform: 'Airbnb', text: 'Nice apartment in downtown\n\nClean place, close to everything. Has wifi and kitchen. Bed is comfortable. Good location. Message me for questions.' },
+    ebay: { platform: 'eBay', text: 'LAPTOP FOR SALE!!!\n\nUsed laptop works great!!! No problems. Fast shipping. Good condition. Battery holds charge. Comes with charger. NO RETURNS!!!' },
+    amazon: { platform: 'Amazon', text: 'USB-C Charger\n\nFast charger for phones. Works with all phones. Good quality. Quick delivery. 5 star product.' }
+  };
+
+  $$('.example-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      var key = chip.getAttribute('data-example');
+      var ex = EXAMPLE_LISTINGS[key];
+      if (!ex) return;
+      listingTextarea.value = ex.text;
+      platformSelect.value = ex.platform;
+      updateCharCounter();
+      listingTextarea.focus();
+      showToast('Example loaded: ' + chip.textContent, 'info');
+      announce('Example listing loaded');
+    });
   });
 
   roastBtn.addEventListener('click', function() {
@@ -1551,10 +1696,13 @@ body {
       clearTimeout(timeout);
       stopLoadingPhrases();
       if (err && err.name === 'AbortError') {
+        showToast('Request timed out. Try again.', 'error');
         showError('timeout');
       } else if (err && err.type === 'rate_limit') {
+        showToast('Rate limit hit. Wait a moment.', 'error');
         showError('rate_limit');
       } else if (err && err.type === 'auth') {
+        showToast('Invalid API key.', 'error');
         showError('auth');
       } else if (err instanceof TypeError && state.provider === 'anthropic') {
         showError('generic', 'Anthropic API doesn\'t support browser requests (CORS). Please use OpenAI or Google Gemini instead.');
@@ -1753,6 +1901,7 @@ body {
         copyText(rewriteText.trim()).then(function() {
           copyBtn.textContent = 'Copied!';
           copyBtn.classList.add('copied');
+          showToast('Rewrite copied to clipboard', 'success');
           announce('Rewrite copied to clipboard');
           setTimeout(function() {
             copyBtn.textContent = 'Copy';
@@ -1772,6 +1921,7 @@ body {
         copyText(rewriteText.trim()).then(function() {
           copyRewriteBtn.textContent = 'Copied!';
           copyRewriteBtn.classList.add('copied');
+          showToast('Rewrite copied to clipboard', 'success');
           announce('Rewrite copied to clipboard');
           setTimeout(function() {
             copyRewriteBtn.textContent = 'Copy Rewrite';
@@ -2060,6 +2210,7 @@ body {
       var json = JSON.stringify(data, null, 2);
       copyText(json).then(function() {
         copyFeedbackBtn.textContent = 'Copied!';
+        showToast('Feedback data copied to clipboard', 'success');
         announce('Feedback data copied to clipboard');
         setTimeout(function() { copyFeedbackBtn.textContent = 'Copy Feedback (JSON)'; }, 2000);
       });
