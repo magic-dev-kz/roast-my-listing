@@ -1,5 +1,16 @@
 # Roast My Listing — Changelog
 
+## v12.0 (2026-03-29) — Compare & Intensity
+
+### Added
+- **Multiple listings comparison** -- "Compare 2 Listings" toggle enables a second textarea; AI compares both listings side-by-side with scores, strengths, weaknesses, and a winner verdict
+- **Roast intensity slider** -- 5-level slider from "Gentle" to "Savage" that adjusts AI prompt tone; default is "Medium" (unchanged behavior)
+
+### Technical
+- SW cache bumped to `roast-v12`
+
+---
+
 ## v11.0 (2026-03-29) — Micro-improvements
 
 ### Changed

@@ -235,6 +235,51 @@ body {
 }
 .char-counter { font-size: var(--text-xs); color: var(--text-dim); text-align: right; margin-top: var(--space-1); margin-bottom: var(--space-6); opacity: 0; transition: opacity .2s; }
 .char-counter.visible { opacity: 1; }
+
+/* v12: Roast Intensity Slider */
+.intensity-wrap { margin-bottom: var(--space-6); }
+.intensity-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px; border-radius: 3px;
+  background: linear-gradient(90deg, #22c55e 0%, #f59e0b 50%, #ef4444 100%);
+  outline: none; cursor: pointer;
+}
+.intensity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--ember);
+  cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.intensity-slider::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--ember);
+  cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.intensity-labels {
+  display: flex; justify-content: space-between; margin-top: var(--space-2);
+}
+.intensity-label { font-size: var(--text-xs); color: var(--text-dim); }
+.intensity-current {
+  text-align: center; font-size: var(--text-sm); font-weight: 600;
+  color: var(--text); margin-top: var(--space-2);
+}
+
+/* v12: Compare 2 Listings */
+.compare-toggle-wrap { margin-bottom: var(--space-4); }
+.compare-toggle-btn {
+  width: 100%; padding: var(--space-3) var(--space-4);
+  background: var(--surface); border: 1px dashed var(--surface-raised);
+  border-radius: var(--radius-md); color: var(--text-muted);
+  font-family: var(--font-main); font-size: var(--text-sm); font-weight: 600;
+  cursor: pointer; transition: border-color .2s, color .2s, background .2s;
+}
+.compare-toggle-btn:hover { border-color: var(--ember); color: var(--text); }
+.compare-toggle-btn[aria-pressed="true"] {
+  border-color: var(--ember); color: var(--ember);
+  background: rgba(249,115,22,.08); border-style: solid;
+}
+.compare-toggle-btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+.listing-2-wrap { margin-top: var(--space-4); animation: cardIn .3s ease; }
 .cta-btn {
   width: 100%; padding: var(--space-4) var(--space-8);
   background: linear-gradient(135deg, var(--fire), var(--ember));
@@ -555,6 +600,44 @@ body {
   .comparison-wrap { grid-template-columns: 1fr; }
   .history-item { padding: var(--space-2) var(--space-3); }
 }
+/* v12: Comparison Result Cards */
+.comparison-result-card {
+  background: var(--surface); border-radius: var(--radius-lg); padding: var(--space-6);
+  box-shadow: var(--shadow-card); margin-bottom: var(--space-6); animation: cardIn .4s ease;
+}
+.comparison-result-title {
+  font-size: var(--text-xl); font-weight: 800; text-align: center; margin-bottom: var(--space-3);
+  background: linear-gradient(135deg, var(--fire), var(--warm, #fbbf24));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.comparison-result-verdict {
+  text-align: center; font-size: var(--text-base); color: var(--text-muted);
+  margin-bottom: var(--space-6); font-style: italic;
+}
+.comparison-result-cols {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);
+}
+@media (max-width: 500px) { .comparison-result-cols { grid-template-columns: 1fr; } }
+.comparison-result-col {
+  padding: var(--space-4); border-radius: var(--radius-md);
+  background: rgba(255,255,255,.03); border: 1px solid var(--surface-raised);
+}
+.comparison-result-col--winner {
+  border-color: var(--warm, #fbbf24);
+  box-shadow: 0 0 16px rgba(251,191,36,.15);
+}
+.comparison-result-col-header {
+  font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-3);
+  text-align: center; text-transform: uppercase; letter-spacing: 1px;
+}
+.comparison-result-col--winner .comparison-result-col-header { color: var(--warm, #fbbf24); }
+.comparison-section { margin-top: var(--space-3); font-size: var(--text-sm); color: var(--text-muted); }
+.comparison-section ul { margin: var(--space-2) 0 0 var(--space-4); }
+.comparison-section li { margin-bottom: var(--space-1); line-height: 1.5; }
+.comparison-recs { border-top: 1px solid var(--surface-raised); padding-top: var(--space-3); }
+.comparison-recs strong { color: var(--score-high-text, #6ee7a0); }
+
 /* Feedback Widget */
 .feedback-widget {
   text-align: center; padding: var(--space-4); margin-top: var(--space-8);
@@ -1110,8 +1193,33 @@ body {
         </div>
       </div>
 
+      <!-- v12: Roast Intensity Slider -->
+      <label class="field-label" for="intensity-slider">Roast Intensity</label>
+      <div class="intensity-wrap">
+        <input type="range" id="intensity-slider" class="intensity-slider" min="1" max="5" value="3" step="1" aria-label="Roast intensity from gentle to savage">
+        <div class="intensity-labels">
+          <span class="intensity-label">Gentle</span>
+          <span class="intensity-label">Mild</span>
+          <span class="intensity-label">Medium</span>
+          <span class="intensity-label">Spicy</span>
+          <span class="intensity-label">Savage</span>
+        </div>
+        <div class="intensity-current" id="intensity-current">Medium</div>
+      </div>
+
+      <!-- v12: Compare 2 Listings Toggle -->
+      <div class="compare-toggle-wrap">
+        <button type="button" class="compare-toggle-btn" id="compare-toggle-btn" aria-pressed="false">Compare 2 Listings</button>
+      </div>
+
       <label class="field-label" for="listing-textarea">Your listing</label>
       <textarea id="listing-textarea" class="listing-textarea" placeholder="Paste your listing text here..." maxlength="10000" aria-describedby="char-counter"></textarea>
+
+      <!-- v12: Second listing textarea (hidden by default) -->
+      <div id="listing-2-wrap" class="listing-2-wrap" style="display:none">
+        <label class="field-label" for="listing-textarea-2">Second listing</label>
+        <textarea id="listing-textarea-2" class="listing-textarea" placeholder="Paste the second listing here..." maxlength="10000"></textarea>
+      </div>
       <div class="listing-stats-bar" id="listing-stats-bar" aria-live="polite">
         <span class="listing-stat"><span class="listing-stat-icon" aria-hidden="true">&#128221;</span> <span class="listing-stat-val" id="stat-words">0</span> words</span>
         <span class="listing-stat"><span class="listing-stat-icon" aria-hidden="true">&#128292;</span> <span class="listing-stat-val" id="stat-chars">0</span> chars</span>
@@ -2931,6 +3039,248 @@ body {
     var score = Math.max(0, Math.min(10, parseInt(data.score, 10) || 0));
     addScoreRecord(score);
   };
+
+  // === v12: Roast Intensity Slider ===
+  var INTENSITY_NAMES = ['', 'Gentle', 'Mild', 'Medium', 'Spicy', 'Savage'];
+  var INTENSITY_PROMPTS = {
+    1: '\n\nTone: Be GENTLE and encouraging. Focus on positives first, then suggest improvements diplomatically. Avoid harsh language.',
+    2: '\n\nTone: Be MILDLY critical. Mix genuine compliments with honest feedback. Constructive and warm.',
+    3: '', // default — no modifier
+    4: '\n\nTone: Be SPICY. Don\'t hold back on pointing out flaws. Use humor and wit. Be direct and unfiltered.',
+    5: '\n\nTone: Be absolutely SAVAGE. Maximum roast intensity. Brutally honest, hilariously mean (but still with useful fixes). Channel your inner Gordon Ramsay. No mercy.'
+  };
+  var intensitySlider = $('#intensity-slider');
+  var intensityCurrent = $('#intensity-current');
+
+  if (intensitySlider) {
+    intensitySlider.addEventListener('input', function() {
+      var val = parseInt(intensitySlider.value, 10);
+      intensityCurrent.textContent = INTENSITY_NAMES[val] || 'Medium';
+    });
+  }
+
+  // === v12: Compare 2 Listings Toggle ===
+  var compareToggleBtn = $('#compare-toggle-btn');
+  var listing2Wrap = $('#listing-2-wrap');
+  var listingTextarea2 = $('#listing-textarea-2');
+  var _compareMode = false;
+
+  if (compareToggleBtn) {
+    compareToggleBtn.addEventListener('click', function() {
+      _compareMode = !_compareMode;
+      compareToggleBtn.setAttribute('aria-pressed', _compareMode ? 'true' : 'false');
+      compareToggleBtn.textContent = _compareMode ? 'Single Listing Mode' : 'Compare 2 Listings';
+      listing2Wrap.style.display = _compareMode ? '' : 'none';
+      // Update roast button text
+      roastBtn.textContent = _compareMode ? 'COMPARE & ROAST \uD83D\uDD25' : 'ROAST IT \uD83D\uDD25';
+    });
+  }
+
+  // Patch doRoast for intensity + comparison mode
+  var _origDoRoast = doRoast;
+  doRoast = function(text, platform) {
+    var intensity = parseInt((intensitySlider && intensitySlider.value) || '3', 10);
+    var intensityAddon = INTENSITY_PROMPTS[intensity] || '';
+
+    if (_compareMode && listingTextarea2 && listingTextarea2.value.trim().length >= 10) {
+      // Comparison mode: completely different prompt
+      var text2 = listingTextarea2.value.trim();
+      var comparisonPrompt = 'You are "The Listing Roaster" - a brutally honest marketplace listing critic.\n\nPlatform: ' + escapeHtml(platform) + '\n\nYou are comparing TWO listings for the same type of product/service. Analyze both and determine which is better.\n\nRespond in EXACTLY this JSON:\n{"listing_a":{"score":5,"summary":"...","strengths":["..."],"weaknesses":["..."]},"listing_b":{"score":7,"summary":"...","strengths":["..."],"weaknesses":["..."]},"winner":"B","verdict":"One line explaining why B wins","recommendations_a":["How to improve A"],"recommendations_b":["How to improve B"]}' + intensityAddon + '\n\nLISTING A:\n' + text + '\n\nLISTING B:\n' + text2;
+
+      showSection('loading');
+      startLoadingPhrases();
+      var estimateEl = $('#loading-estimate');
+      if (estimateEl) estimateEl.textContent = 'Estimated time: ~20 seconds (comparing 2 listings)';
+      announce('Comparing two listings, please wait');
+
+      var controller = new AbortController();
+      var timeout = setTimeout(function() { controller.abort(); }, 45000);
+      var fetchPromise;
+
+      if (state.provider === 'openai') {
+        fetchPromise = fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.apiKey },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'system', content: comparisonPrompt }, { role: 'user', content: 'Compare these two listings.' }],
+            response_format: { type: 'json_object' }
+          }),
+          signal: controller.signal
+        }).then(function(r) {
+          if (r.status === 429) throw { type: 'rate_limit' };
+          if (r.status === 401) throw { type: 'auth' };
+          if (!r.ok) throw { type: 'api', status: r.status };
+          return r.json();
+        }).then(function(data) {
+          var content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+          if (!content) throw { type: 'empty' };
+          return content;
+        });
+      } else if (state.provider === 'google') {
+        fetchPromise = fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + state.apiKey, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: comparisonPrompt + '\n\nCompare these two listings.' }] }],
+            generationConfig: { responseMimeType: 'application/json' }
+          }),
+          signal: controller.signal
+        }).then(function(r) {
+          if (r.status === 429) throw { type: 'rate_limit' };
+          if (r.status === 401 || r.status === 403) throw { type: 'auth' };
+          if (!r.ok) throw { type: 'api', status: r.status };
+          return r.json();
+        }).then(function(data) {
+          var content = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+          if (!content) throw { type: 'empty' };
+          return content;
+        });
+      } else if (state.provider === 'anthropic') {
+        fetchPromise = fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': state.apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 4096,
+            system: comparisonPrompt,
+            messages: [{ role: 'user', content: 'Compare these two listings.' }]
+          }),
+          signal: controller.signal
+        }).then(function(r) {
+          if (r.status === 429) throw { type: 'rate_limit' };
+          if (r.status === 401) throw { type: 'auth' };
+          if (!r.ok) throw { type: 'api', status: r.status };
+          return r.json();
+        }).then(function(data) {
+          var content = data.content && data.content[0] && data.content[0].text;
+          if (!content) throw { type: 'empty' };
+          return content;
+        });
+      } else {
+        stopLoadingPhrases();
+        clearTimeout(timeout);
+        showSection('input');
+        return;
+      }
+
+      fetchPromise.then(function(rawContent) {
+        clearTimeout(timeout);
+        stopLoadingPhrases();
+        var parsed;
+        try { parsed = JSON.parse(rawContent); } catch(e) {
+          showError('off-script', rawContent);
+          return;
+        }
+        if (!parsed.listing_a || !parsed.listing_b) {
+          showError('off-script', rawContent);
+          return;
+        }
+        renderComparisonResult(parsed);
+        showSection('result');
+        announce('Comparison complete. Winner: Listing ' + (parsed.winner || '?'));
+      }).catch(function(err) {
+        clearTimeout(timeout);
+        stopLoadingPhrases();
+        if (err && err.name === 'AbortError') { showError('timeout'); }
+        else if (err && err.type === 'rate_limit') { showError('rate_limit'); }
+        else if (err && err.type === 'auth') { showError('auth'); }
+        else { showError('generic', (err && err.message) || 'Unknown error'); }
+      });
+      return;
+    }
+
+    // Single listing mode — inject intensity into SYSTEM_PROMPT_BASE
+    var origBase = SYSTEM_PROMPT_BASE;
+    SYSTEM_PROMPT_BASE = origBase + intensityAddon;
+    _origDoRoast(text, platform);
+    SYSTEM_PROMPT_BASE = origBase;
+  };
+
+  function renderComparisonResult(data) {
+    var rc = $('#result-content');
+    var scoreA = Math.max(0, Math.min(10, parseInt(data.listing_a.score, 10) || 0));
+    var scoreB = Math.max(0, Math.min(10, parseInt(data.listing_b.score, 10) || 0));
+    var colorA = getScoreColor(scoreA);
+    var colorB = getScoreColor(scoreB);
+    var winner = (data.winner || 'B').toUpperCase();
+
+    var html = '<div class="comparison-result-card">';
+    html += '<h2 class="comparison-result-title">Listing Showdown</h2>';
+    html += '<div class="comparison-result-verdict">' + escapeHtml(data.verdict || '') + '</div>';
+    html += '<div class="comparison-result-cols">';
+
+    // Listing A
+    html += '<div class="comparison-result-col' + (winner === 'A' ? ' comparison-result-col--winner' : '') + '">';
+    html += '<div class="comparison-result-col-header">Listing A' + (winner === 'A' ? ' \uD83C\uDFC6' : '') + '</div>';
+    html += '<div class="score-number" style="color:' + colorA + ';font-size:var(--text-2xl)">' + scoreA + ' / 10</div>';
+    html += '<p class="score-summary">' + escapeHtml(data.listing_a.summary || '') + '</p>';
+    if (data.listing_a.strengths) {
+      html += '<div class="comparison-section"><strong>Strengths:</strong><ul>';
+      data.listing_a.strengths.forEach(function(s) { html += '<li>' + escapeHtml(s) + '</li>'; });
+      html += '</ul></div>';
+    }
+    if (data.listing_a.weaknesses) {
+      html += '<div class="comparison-section"><strong>Weaknesses:</strong><ul>';
+      data.listing_a.weaknesses.forEach(function(s) { html += '<li>' + escapeHtml(s) + '</li>'; });
+      html += '</ul></div>';
+    }
+    if (data.recommendations_a) {
+      html += '<div class="comparison-section comparison-recs"><strong>How to improve:</strong><ul>';
+      data.recommendations_a.forEach(function(s) { html += '<li>' + escapeHtml(s) + '</li>'; });
+      html += '</ul></div>';
+    }
+    html += '</div>';
+
+    // Listing B
+    html += '<div class="comparison-result-col' + (winner === 'B' ? ' comparison-result-col--winner' : '') + '">';
+    html += '<div class="comparison-result-col-header">Listing B' + (winner === 'B' ? ' \uD83C\uDFC6' : '') + '</div>';
+    html += '<div class="score-number" style="color:' + colorB + ';font-size:var(--text-2xl)">' + scoreB + ' / 10</div>';
+    html += '<p class="score-summary">' + escapeHtml(data.listing_b.summary || '') + '</p>';
+    if (data.listing_b.strengths) {
+      html += '<div class="comparison-section"><strong>Strengths:</strong><ul>';
+      data.listing_b.strengths.forEach(function(s) { html += '<li>' + escapeHtml(s) + '</li>'; });
+      html += '</ul></div>';
+    }
+    if (data.listing_b.weaknesses) {
+      html += '<div class="comparison-section"><strong>Weaknesses:</strong><ul>';
+      data.listing_b.weaknesses.forEach(function(s) { html += '<li>' + escapeHtml(s) + '</li>'; });
+      html += '</ul></div>';
+    }
+    if (data.recommendations_b) {
+      html += '<div class="comparison-section comparison-recs"><strong>How to improve:</strong><ul>';
+      data.recommendations_b.forEach(function(s) { html += '<li>' + escapeHtml(s) + '</li>'; });
+      html += '</ul></div>';
+    }
+    html += '</div>';
+
+    html += '</div>'; // cols
+    html += '</div>'; // card
+
+    // Actions
+    html += '<div class="result-actions">';
+    html += '<button type="button" class="try-again-btn" id="try-again-btn" aria-label="Compare another pair">Compare Another</button>';
+    html += '</div>';
+
+    rc.innerHTML = html;
+
+    var tryAgainBtn = $('#try-again-btn');
+    if (tryAgainBtn) {
+      tryAgainBtn.addEventListener('click', function() {
+        listingTextarea.value = '';
+        if (listingTextarea2) listingTextarea2.value = '';
+        updateCharCounter();
+        removePhoto();
+        showSection('input');
+        listingTextarea.focus();
+      });
+    }
+  }
 
   init();
   updateFeedbackStats();
