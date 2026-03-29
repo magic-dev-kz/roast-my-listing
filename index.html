@@ -598,6 +598,73 @@ body {
 }
 .copy-feedback-btn:hover { border-color: var(--ember); color: var(--text); }
 .copy-feedback-btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+/* Photo Upload */
+.photo-upload-zone {
+  border: 2px dashed rgba(68,64,60,.6);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  text-align: center;
+  margin-bottom: var(--space-6);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+.photo-upload-zone:hover,
+.photo-upload-zone.drag-over {
+  border-color: var(--ember);
+  background: rgba(249,115,22,.06);
+}
+.photo-upload-zone.has-photo {
+  border-style: solid;
+  border-color: var(--ember);
+  padding: var(--space-4);
+  cursor: default;
+}
+.photo-upload-icon { font-size: 2rem; margin-bottom: var(--space-2); opacity: .6; }
+.photo-upload-text { font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-3); }
+.photo-upload-text strong { color: var(--text); }
+.photo-upload-hint { font-size: var(--text-xs); color: var(--text-dim); }
+.photo-upload-btn {
+  display: inline-block; padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--ember); background: transparent; color: var(--ember);
+  border-radius: var(--radius-sm); cursor: pointer; font-size: var(--text-sm);
+  font-family: var(--font-main); transition: background .15s, color .15s;
+  margin-top: var(--space-3);
+}
+.photo-upload-btn:hover { background: var(--ember); color: #fff; }
+.photo-upload-btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+.photo-preview-wrap {
+  display: flex; align-items: center; gap: var(--space-4);
+}
+.photo-preview-thumb {
+  width: 150px; height: 150px; object-fit: cover; border-radius: var(--radius-sm);
+  border: 1px solid rgba(68,64,60,.5);
+}
+.photo-preview-info { flex: 1; text-align: left; }
+.photo-preview-name { font-size: var(--text-sm); color: var(--text); margin-bottom: var(--space-1); word-break: break-all; }
+.photo-preview-size { font-size: var(--text-xs); color: var(--text-dim); margin-bottom: var(--space-3); }
+.photo-remove-btn {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--fire); background: transparent; color: var(--fire);
+  border-radius: var(--radius-sm); cursor: pointer; font-size: var(--text-sm);
+  font-family: var(--font-main); transition: background .15s, color .15s;
+}
+.photo-remove-btn:hover { background: var(--fire); color: #fff; }
+.photo-remove-btn:focus-visible { outline: 2px solid var(--fire); outline-offset: 2px; }
+.photo-toast {
+  position: fixed; bottom: var(--space-6); left: 50%; transform: translateX(-50%);
+  background: var(--fire); color: #fff; padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md); font-size: var(--text-sm); font-weight: 600;
+  box-shadow: var(--shadow-lg); z-index: 999;
+  animation: toastIn .3s ease, toastOut .3s ease 2.7s forwards;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+.photo-badge {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  font-size: var(--text-xs); color: var(--ember); background: rgba(249,115,22,.1);
+  padding: 2px var(--space-2); border-radius: var(--radius-sm); margin-left: var(--space-2);
+}
 .openclaw-footer {
   text-align: center;
   padding: 24px 16px;
@@ -707,6 +774,27 @@ body {
         <option value="Craigslist">Craigslist</option>
         <option value="Other">Other</option>
       </select>
+      <label class="field-label">Product Photo <span style="color:var(--text-dim);font-weight:400">(optional)</span></label>
+      <div class="photo-upload-zone" id="photo-upload-zone" role="button" tabindex="0" aria-label="Upload product photo">
+        <div id="photo-empty-state">
+          <div class="photo-upload-icon" aria-hidden="true">&#128247;</div>
+          <p class="photo-upload-text">Drag &amp; drop a photo here, or</p>
+          <button type="button" class="photo-upload-btn" id="photo-upload-btn" aria-label="Upload photo">Upload Photo</button>
+          <p class="photo-upload-hint">JPG, PNG, WebP &bull; Max 5 MB</p>
+        </div>
+        <div id="photo-preview-state" style="display:none">
+          <div class="photo-preview-wrap">
+            <img id="photo-preview-img" class="photo-preview-thumb" src="" alt="Uploaded product photo">
+            <div class="photo-preview-info">
+              <p class="photo-preview-name" id="photo-preview-name"></p>
+              <p class="photo-preview-size" id="photo-preview-size"></p>
+              <button type="button" class="photo-remove-btn" id="photo-remove-btn" aria-label="Remove photo">Remove</button>
+            </div>
+          </div>
+        </div>
+        <input type="file" id="photo-file-input" accept="image/jpeg,image/png,image/webp" style="display:none" aria-hidden="true">
+      </div>
+
       <label class="field-label" for="listing-textarea">Your listing</label>
       <textarea id="listing-textarea" class="listing-textarea" placeholder="Paste your listing text here..." maxlength="10000" aria-describedby="char-counter"></textarea>
       <div class="char-counter" id="char-counter" aria-live="polite">0 / 10,000</div>
@@ -726,7 +814,7 @@ body {
     <div class="loading-wrap">
       <div class="loading-fire" aria-hidden="true">&#128293;</div>
       <p class="loading-text">Roasting your listing...</p>
-      <p class="loading-estimate">Estimated time: ~15 seconds</p>
+      <p class="loading-estimate" id="loading-estimate">Estimated time: ~15 seconds</p>
       <div class="progress-track">
         <div class="progress-fill" id="progress-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Roast progress"></div>
       </div>
@@ -805,7 +893,10 @@ body {
     apiKey: lsGet('rml_apikey') || '',
     lastListing: '',
     lastPlatform: 'Amazon',
-    lastResult: null
+    lastResult: null,
+    photoBase64: null,
+    photoMimeType: null,
+    photoName: null
   };
 
   function showSection(id) {
@@ -943,6 +1034,124 @@ body {
   });
   listingTextarea.addEventListener('blur', function() {
     if (!listingTextarea.value) charCounter.classList.remove('visible');
+  });
+
+  // === Photo Upload Logic ===
+  var photoZone = $('#photo-upload-zone');
+  var photoFileInput = $('#photo-file-input');
+  var photoUploadBtn = $('#photo-upload-btn');
+  var photoRemoveBtn = $('#photo-remove-btn');
+  var photoEmptyState = $('#photo-empty-state');
+  var photoPreviewState = $('#photo-preview-state');
+  var photoPreviewImg = $('#photo-preview-img');
+  var photoPreviewName = $('#photo-preview-name');
+  var photoPreviewSize = $('#photo-preview-size');
+  var PHOTO_MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
+  function showPhotoToast(msg) {
+    var existing = document.querySelector('.photo-toast');
+    if (existing) existing.remove();
+    var toast = document.createElement('div');
+    toast.className = 'photo-toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 3000);
+  }
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function handlePhotoFile(file) {
+    if (!file) return;
+    var validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (validTypes.indexOf(file.type) === -1) {
+      showPhotoToast('Unsupported format. Use JPG, PNG, or WebP.');
+      return;
+    }
+    if (file.size > PHOTO_MAX_SIZE) {
+      showPhotoToast('Photo too large (max 5 MB)');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var dataUrl = e.target.result;
+      var base64 = dataUrl.split(',')[1];
+      state.photoBase64 = base64;
+      state.photoMimeType = file.type;
+      state.photoName = file.name;
+      photoPreviewImg.src = dataUrl;
+      photoPreviewName.textContent = file.name;
+      photoPreviewSize.textContent = formatFileSize(file.size);
+      photoEmptyState.style.display = 'none';
+      photoPreviewState.style.display = 'block';
+      photoZone.classList.add('has-photo');
+      announce('Photo uploaded: ' + file.name);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removePhoto() {
+    state.photoBase64 = null;
+    state.photoMimeType = null;
+    state.photoName = null;
+    photoPreviewImg.src = '';
+    photoEmptyState.style.display = 'block';
+    photoPreviewState.style.display = 'none';
+    photoZone.classList.remove('has-photo');
+    photoFileInput.value = '';
+    announce('Photo removed');
+  }
+
+  photoUploadBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    photoFileInput.click();
+  });
+
+  photoZone.addEventListener('click', function(e) {
+    if (photoZone.classList.contains('has-photo')) return;
+    if (e.target === photoUploadBtn || e.target === photoRemoveBtn) return;
+    photoFileInput.click();
+  });
+
+  photoZone.addEventListener('keydown', function(e) {
+    if ((e.key === 'Enter' || e.key === ' ') && !photoZone.classList.contains('has-photo')) {
+      e.preventDefault();
+      photoFileInput.click();
+    }
+  });
+
+  photoFileInput.addEventListener('change', function() {
+    if (photoFileInput.files && photoFileInput.files[0]) {
+      handlePhotoFile(photoFileInput.files[0]);
+    }
+  });
+
+  photoRemoveBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    removePhoto();
+  });
+
+  // Drag and drop
+  photoZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    photoZone.classList.add('drag-over');
+  });
+  photoZone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    photoZone.classList.remove('drag-over');
+  });
+  photoZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    photoZone.classList.remove('drag-over');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handlePhotoFile(e.dataTransfer.files[0]);
+    }
   });
 
   roastBtn.addEventListener('click', function() {
@@ -1098,6 +1307,8 @@ body {
 
   var SYSTEM_PROMPT_BASE = 'You are "The Listing Roaster" - a brutally honest but constructive marketplace listing critic.\n\nPlatform: {platform}\n{platformHint}\n\nRespond in EXACTLY this JSON:\n{"roast":[{"issue":"short title","roast":"Your title has 3 words.","fix":"Add specs"}],"score":4,"score_breakdown":{"title":3,"description":5,"keywords":2,"emotion":4,"trust":6},"rewrite":{"title":"...","description":"..."},"summary":"One line savage summary"}\n\nRules:\n- Be funny but USEFUL. Every roast must have a concrete fix.\n- Score honestly: most listings deserve 3-6. 9-10 is exceptional.\n- Rewrite must be ready to copy-paste. Same product, improve everything.\n- Adapt to platform norms (Avito=Russian, Etsy=creative/SEO, eBay=specs, Airbnb=emotional/trust, Amazon=bullet-points/SEO, Craigslist=trust).\n- If listing is in Russian, respond in Russian. If English, respond in English.\n- Max 7 roast points. Min 3.';
 
+  var PHOTO_PROMPT_ADDON = '\n\nIMPORTANT: A product PHOTO has been attached. Analyze BOTH the listing TEXT and the PRODUCT PHOTO.\n- Add "photo" to score_breakdown (out of 10) evaluating: image quality, lighting, staging, background, angles.\n- Include at least one roast item about the photo (e.g. lighting, background clutter, blur, angles).\n- In the rewrite section, add a "photo_tips" field (string) with specific re-shoot suggestions (lighting, background, angles, props).\n- Be brutally honest about the photo quality. Bad phone photos in messy rooms deserve to be roasted.';
+
   var HISTORY_KEY = 'rml_history';
   var HISTORY_MAX = 20;
   var HISTORY_DISPLAY = 5;
@@ -1201,16 +1412,30 @@ body {
   function doRoast(text, platform) {
     showSection('loading');
     startLoadingPhrases();
+    var estimateEl = $('#loading-estimate');
+    if (estimateEl) estimateEl.textContent = state.photoBase64 ? 'Estimated time: ~25 seconds (analyzing photo + text)' : 'Estimated time: ~15 seconds';
     announce('Roasting your listing, please wait');
 
     var hint = PLATFORM_HINTS[platform] || '';
+    var hasPhoto = !!(state.photoBase64 && state.photoMimeType);
     var prompt = SYSTEM_PROMPT_BASE.replace('{platform}', escapeHtml(platform)).replace('{platformHint}', hint ? '\n' + hint : '');
+    if (hasPhoto) prompt += PHOTO_PROMPT_ADDON;
     var controller = new AbortController();
-    var timeout = setTimeout(function() { controller.abort(); }, 30000);
+    var timeout = setTimeout(function() { controller.abort(); }, 45000);
 
     var fetchPromise;
 
     if (state.provider === 'openai') {
+      // Build user content: text + optional image
+      var userContent;
+      if (hasPhoto) {
+        userContent = [
+          { type: 'text', text: text },
+          { type: 'image_url', image_url: { url: 'data:' + state.photoMimeType + ';base64,' + state.photoBase64, detail: 'low' } }
+        ];
+      } else {
+        userContent = text;
+      }
       fetchPromise = fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -1218,10 +1443,10 @@ body {
           'Authorization': 'Bearer ' + state.apiKey
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
+          model: hasPhoto ? 'gpt-4o' : 'gpt-4o-mini',
           messages: [
             { role: 'system', content: prompt },
-            { role: 'user', content: text }
+            { role: 'user', content: userContent }
           ],
           response_format: { type: 'json_object' }
         }),
@@ -1238,11 +1463,16 @@ body {
       });
 
     } else if (state.provider === 'google') {
+      // Build parts: text + optional inline image
+      var parts = [{ text: prompt + '\n\nListing:\n' + text }];
+      if (hasPhoto) {
+        parts.push({ inlineData: { mimeType: state.photoMimeType, data: state.photoBase64 } });
+      }
       fetchPromise = fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + state.apiKey, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt + '\n\nListing:\n' + text }] }],
+          contents: [{ parts: parts }],
           generationConfig: { responseMimeType: 'application/json' }
         }),
         signal: controller.signal
@@ -1264,6 +1494,16 @@ body {
       });
 
     } else if (state.provider === 'anthropic') {
+      // Build user content: optional image + text
+      var anthropicUserContent;
+      if (hasPhoto) {
+        anthropicUserContent = [
+          { type: 'image', source: { type: 'base64', media_type: state.photoMimeType, data: state.photoBase64 } },
+          { type: 'text', text: text }
+        ];
+      } else {
+        anthropicUserContent = text;
+      }
       fetchPromise = fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -1276,7 +1516,7 @@ body {
           model: 'claude-sonnet-4-20250514',
           max_tokens: 4096,
           system: prompt,
-          messages: [{ role: 'user', content: text }]
+          messages: [{ role: 'user', content: anthropicUserContent }]
         }),
         signal: controller.signal
       }).then(function(r) {
@@ -1414,6 +1654,7 @@ body {
       html += '<span class="breakdown-arrow" id="breakdown-arrow">&#9654;</span> Score Breakdown</button>';
       html += '<div class="breakdown-content" id="breakdown-panel" role="region">';
       var cats = ['title', 'description', 'keywords', 'emotion', 'trust'];
+      if (data.score_breakdown && data.score_breakdown.photo !== undefined) cats.push('photo');
       cats.forEach(function(cat) {
         var val = Math.max(0, Math.min(10, parseInt(data.score_breakdown[cat], 10) || 0));
         var c = getScoreColor(val);
@@ -1457,7 +1698,7 @@ body {
         html += '</div>';
         html += '<div class="comparison-col comparison-col--rewrite">';
         html += '<div class="comparison-col-title">Rewrite</div>';
-        html += '<div class="comparison-text">' + escapeHtml((data.rewrite.title ? data.rewrite.title + '\n\n' : '') + (data.rewrite.description || '')) + '</div>';
+        html += '<div class="comparison-text">' + escapeHtml((data.rewrite.title ? data.rewrite.title + '\n\n' : '') + (data.rewrite.description || '') + (data.rewrite.photo_tips ? '\n\nPhoto Tips: ' + data.rewrite.photo_tips : '')) + '</div>';
         html += '</div>';
         html += '</div>';
       }
@@ -1468,6 +1709,10 @@ body {
       if (data.rewrite.description) {
         html += '<p class="rewrite-section-label">Description</p>';
         html += '<p class="rewrite-text-desc">' + escapeHtml(data.rewrite.description) + '</p>';
+      }
+      if (data.rewrite.photo_tips) {
+        html += '<p class="rewrite-section-label" style="margin-top:var(--space-4)">Photo Tips <span class="photo-badge">&#128247; Photo</span></p>';
+        html += '<p class="rewrite-text-desc">' + escapeHtml(data.rewrite.photo_tips) + '</p>';
       }
       html += '</div>';
     }
@@ -1572,6 +1817,7 @@ body {
       tryAgainBtn.addEventListener('click', function() {
         listingTextarea.value = '';
         updateCharCounter();
+        removePhoto();
         showSection('input');
         listingTextarea.focus();
       });
