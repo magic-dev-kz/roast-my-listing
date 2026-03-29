@@ -673,9 +673,9 @@ body {
 }
 .skeleton-wrap { max-width: 640px; margin: 0 auto; }
 .skeleton {
-  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-raised) 50%, var(--surface) 75%);
-  background-size: 200% 100%;
-  animation: shimmerSkeleton 1.5s infinite;
+  background: linear-gradient(90deg, var(--surface) 20%, rgba(255,255,255,.08) 40%, var(--surface-raised) 50%, rgba(255,255,255,.08) 60%, var(--surface) 80%);
+  background-size: 300% 100%;
+  animation: shimmerSkeleton 1.8s ease-in-out infinite;
   border-radius: var(--radius-md);
 }
 .skeleton-score {
@@ -921,19 +921,41 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* v10: How it works mini-guide */
+/* v10: How it works mini-guide — v11 polish */
 .how-it-works {
   display: flex; gap: var(--space-6); margin-top: var(--space-8);
   justify-content: center; text-align: center;
+  position: relative;
+}
+/* connector line between steps */
+.how-it-works::before {
+  content: ''; position: absolute; top: 22px;
+  left: calc(50% - 100px); width: 200px; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(249,115,22,.25), transparent);
+  z-index: 0;
 }
 .how-it-works-step {
   flex: 1; max-width: 120px;
+  position: relative; z-index: 1;
+  animation: howStepIn .5s ease both;
+}
+.how-it-works-step:nth-child(1) { animation-delay: .1s; }
+.how-it-works-step:nth-child(2) { animation-delay: .25s; }
+.how-it-works-step:nth-child(3) { animation-delay: .4s; }
+@keyframes howStepIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .how-it-works-icon {
   font-size: 1.5rem; margin-bottom: var(--space-2);
-  width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(249,115,22,.1); border: 1px solid rgba(249,115,22,.25);
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.3);
   display: inline-flex; align-items: center; justify-content: center;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.how-it-works-step:hover .how-it-works-icon {
+  transform: scale(1.1);
+  box-shadow: 0 0 16px rgba(249,115,22,.3);
 }
 .how-it-works-num {
   font-size: var(--text-xs); color: var(--ember); font-weight: 700;

@@ -1,5 +1,17 @@
 # Roast My Listing — Changelog
 
+## v11.0 (2026-03-29) — Micro-improvements
+
+### Changed
+- **Onboarding "How it works" polish** — steps now stagger-animate in with `howStepIn` keyframes; icons scale up with glow on hover; subtle horizontal connector line between steps
+- **Skeleton shimmer more visible** — shimmer gradient widened to 300% with added white highlight peaks for a more pronounced loading effect; easing changed to ease-in-out at 1.8s cycle
+- SW cache bumped to `roast-v11`
+
+### Preserved
+- All v10.x features intact (How it works guide, Gemini suggestion in errors)
+
+---
+
 ## v9.0 (2026-03-29) — Pre-Launch Final Polish
 
 ### Added
