@@ -1064,6 +1064,7 @@ body {
       return;
     }
     var reader = new FileReader();
+    reader.onerror = function() { showPhotoToast('Failed to read file. Try another.'); };
     reader.onload = function(e) {
       var dataUrl = e.target.result;
       var base64 = dataUrl.split(',')[1];
