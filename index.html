@@ -1537,7 +1537,40 @@ body {
     roastBtn.disabled = len < 10;
   }
 
-  listingTextarea.addEventListener('input', updateCharCounter);
+  // v14: Auto-detect platform from listing text
+  function autoDetectPlatform(text) {
+    var lower = text.toLowerCase();
+    var scores = { Etsy: 0, Airbnb: 0, eBay: 0, Amazon: 0 };
+    // Etsy keywords
+    ['handmade','handcrafted','vintage','custom order','made to order','gift wrap','personalize','etsy','craft','artisan','crochet','knit','macrame','resin','polymer clay'].forEach(function(k) { if (lower.indexOf(k) > -1) scores.Etsy += 2; });
+    ['shop','seller','tag','favorite','treasury'].forEach(function(k) { if (lower.indexOf(k) > -1) scores.Etsy++; });
+    // Airbnb keywords
+    ['check-in','checkout','check in','check out','amenities','self check','host','superhost','airbnb','guest','listing','cozy stay','wifi password','house rules','neighbourhood','neighborhood'].forEach(function(k) { if (lower.indexOf(k) > -1) scores.Airbnb += 2; });
+    ['apartment','flat','studio','bedroom','bathroom','kitchen','towels','linens'].forEach(function(k) { if (lower.indexOf(k) > -1) scores.Airbnb++; });
+    // eBay keywords
+    ['ebay','bid','auction','buy it now','best offer','no returns','free shipping','item specifics','condition:','feedback','paypal'].forEach(function(k) { if (lower.indexOf(k) > -1) scores.eBay += 2; });
+    ['shipping','used','pre-owned','new in box','nib','nwt'].forEach(function(k) { if (lower.indexOf(k) > -1) scores.eBay++; });
+    // Amazon keywords
+    ['amazon','prime','asin','bullet point','a+ content','add to cart','subscribe & save','fulfilled by','fba','buy box'].forEach(function(k) { if (lower.indexOf(k) > -1) scores.Amazon += 2; });
+    ['warranty','compatible with','package includes','specifications','model number'].forEach(function(k) { if (lower.indexOf(k) > -1) scores.Amazon++; });
+    var best = null, bestScore = 0;
+    Object.keys(scores).forEach(function(p) {
+      if (scores[p] > bestScore) { bestScore = scores[p]; best = p; }
+    });
+    return bestScore >= 2 ? best : null;
+  }
+
+  listingTextarea.addEventListener('input', function() {
+    updateCharCounter();
+    var text = listingTextarea.value;
+    if (text.length >= 20) {
+      var detected = autoDetectPlatform(text);
+      if (detected && platformSelect.value !== detected) {
+        platformSelect.value = detected;
+        showToast('Platform auto-detected: ' + detected, 'info');
+      }
+    }
+  });
   listingTextarea.addEventListener('focus', function() {
     charCounter.classList.add('visible');
   });

@@ -1,5 +1,13 @@
 # Roast My Listing — Changelog
 
+## v14.0 (2026-03-29) — Auto-detect Platform
+
+### Added
+- **Auto-detect platform** -- analyzes listing text for platform-specific keywords (Etsy: handmade, vintage, tags; Airbnb: check-in, amenities, host; eBay: auction, bid, no returns; Amazon: prime, asin, bullet point) and auto-selects the matching platform dropdown; triggers on 20+ chars with toast notification
+- SW cache bumped to `roast-v14`
+
+---
+
 ## v13.0 (2026-03-29) — SEO Keyword Hints
 
 ### Added
