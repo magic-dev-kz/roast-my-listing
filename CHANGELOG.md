@@ -1,5 +1,9 @@
 # Roast My Listing — Changelog
 
+## v16.0 (2026-03-29) — Loading Tips
+
+- **Loading Tips**: Rotating useful tips shown during AI analysis (e.g., "Did you know? Roast works with product photos too!")
+- SW cache bumped to `roast-v16`
 ## v15.0 (2026-03-29) — Word Count Target
 
 ### Added
