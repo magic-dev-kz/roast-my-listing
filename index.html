@@ -761,6 +761,70 @@ body {
 .oc-footer a{font-size:.78rem;color:var(--text-muted,var(--text-secondary,#888));text-decoration:none;opacity:.6;transition:opacity .2s}
 .oc-footer a:hover{opacity:1}
 
+/* v8: Roast Comparison Banner */
+.roast-comparison-banner {
+  background: linear-gradient(135deg, rgba(34,197,94,.12), rgba(249,115,22,.12));
+  border: 1px solid var(--ember);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-6);
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  animation: cardIn .5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.roast-comparison-banner.improved { border-color: var(--score-high); }
+.roast-comparison-banner.declined { border-color: var(--fire); }
+.roast-comparison-icon { font-size: 1.5rem; flex-shrink: 0; }
+.roast-comparison-text { font-size: var(--text-sm); color: var(--text); line-height: 1.4; }
+.roast-comparison-text strong { font-weight: 700; }
+.roast-comparison-scores {
+  display: flex; align-items: center; gap: var(--space-2);
+  font-size: var(--text-lg); font-weight: 800;
+}
+.roast-comparison-old { color: var(--text-muted); text-decoration: line-through; }
+.roast-comparison-arrow { color: var(--text-dim); }
+.roast-comparison-new-up { color: var(--score-high); }
+.roast-comparison-new-down { color: var(--fire); }
+.roast-comparison-new-same { color: var(--score-mid); }
+
+/* v8: Platform Tips */
+.platform-tips-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--ember);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-card);
+  animation: cardIn .5s cubic-bezier(0.34, 1.56, 0.64, 1) .2s both;
+}
+.platform-tips-title {
+  font-size: var(--text-base); font-weight: 700; margin-bottom: var(--space-4);
+  color: var(--ember);
+}
+.platform-tip-item {
+  display: flex; align-items: flex-start; gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid rgba(68,64,60,.3);
+  font-size: var(--text-sm); color: var(--text-muted); line-height: 1.5;
+}
+.platform-tip-item:last-child { border-bottom: none; }
+.platform-tip-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+/* v8: Copy Roast Summary */
+.copy-summary-btn {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--surface-raised);
+  background: transparent; color: var(--text-muted);
+  border-radius: var(--radius-sm); cursor: pointer;
+  font-size: var(--text-sm); font-family: var(--font-main);
+  transition: border-color .15s, color .15s, background .15s;
+}
+.copy-summary-btn:hover { border-color: var(--ember); color: var(--text); }
+.copy-summary-btn:active { transform: scale(0.95); }
+.copy-summary-btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+.copy-summary-btn.copied { border-color: var(--score-high); color: var(--score-high-text); }
+
 /* PWA Install Banner (v7) */
 .pwa-install-banner {
   display: none;
@@ -2357,6 +2421,187 @@ body {
   renderResult = function(data) {
     _origRenderResultV7(data);
     lsRemove(DRAFT_KEY);
+  };
+
+  // === v8: Roast Comparison (previous score tracking) ===
+  var SCORE_HISTORY_KEY = 'rml_score_history';
+
+  function hashListing(text) {
+    // Simple hash of trimmed, lowercased text (first 200 chars)
+    var s = (text || '').trim().toLowerCase().slice(0, 200);
+    var hash = 0;
+    for (var i = 0; i < s.length; i++) {
+      hash = ((hash << 5) - hash) + s.charCodeAt(i);
+      hash |= 0;
+    }
+    return 'h' + Math.abs(hash).toString(36);
+  }
+
+  function getScoreHistory() {
+    try { return JSON.parse(lsGet(SCORE_HISTORY_KEY) || '{}'); } catch(e) { return {}; }
+  }
+
+  function saveScoreForListing(listingText, score) {
+    var history = getScoreHistory();
+    var key = hashListing(listingText);
+    history[key] = { score: score, timestamp: Date.now() };
+    // Keep max 50 entries
+    var keys = Object.keys(history);
+    if (keys.length > 50) {
+      keys.sort(function(a, b) { return history[a].timestamp - history[b].timestamp; });
+      for (var i = 0; i < keys.length - 50; i++) delete history[keys[i]];
+    }
+    try { lsSet(SCORE_HISTORY_KEY, JSON.stringify(history)); } catch(e) {}
+  }
+
+  function getPreviousScore(listingText) {
+    var history = getScoreHistory();
+    var key = hashListing(listingText);
+    return history[key] ? history[key].score : null;
+  }
+
+  // === v8: Platform-Specific Tips (hardcoded) ===
+  var PLATFORM_TIPS = {
+    'Etsy': [
+      { icon: '\uD83D\uDD0D', tip: 'Use all 13 tag slots with long-tail keywords. Etsy SEO relies heavily on tags matching search queries.' },
+      { icon: '\uD83D\uDCF7', tip: 'First photo is your thumbnail in search. Use bright, clean mockups or lifestyle shots on white/neutral backgrounds.' },
+      { icon: '\u2B50', tip: 'Add "Bestseller" or seasonal keywords in your title. Etsy boosts listings that match trending searches.' }
+    ],
+    'Amazon': [
+      { icon: '\uD83D\uDD25', tip: 'Use A+ Content (Enhanced Brand Content) to add comparison charts and lifestyle images below the fold.' },
+      { icon: '\uD83D\uDCDD', tip: 'Front-load your title with the most searched keyword. Amazon truncates titles at ~80 chars on mobile.' },
+      { icon: '\u2B50', tip: 'Write bullet points that answer objections. Each bullet should address one specific buyer concern.' }
+    ],
+    'eBay': [
+      { icon: '\uD83D\uDCE6', tip: 'Fill in ALL item specifics. eBay filters use these fields, and incomplete listings get buried.' },
+      { icon: '\uD83D\uDCB0', tip: 'Offer free shipping or build it into the price. eBay promotes free-shipping listings in Best Match.' },
+      { icon: '\uD83D\uDCF7', tip: 'Use 12 photos minimum. Show every angle, defect, and include a photo with a ruler for scale.' }
+    ],
+    'Airbnb': [
+      { icon: '\uD83C\uDFE0', tip: 'Your first 5 photos determine bookings. Lead with the hero shot of your best room, then kitchen, bathroom, view.' },
+      { icon: '\u2764\uFE0F', tip: 'Write your description in first person. "You\'ll wake up to..." converts better than "The apartment has..."' },
+      { icon: '\uD83D\uDCCD', tip: 'Mention specific local attractions by name. "5 min walk to Central Park" beats "close to attractions."' }
+    ],
+    'Avito': [
+      { icon: '\uD83D\uDCF7', tip: '\u0424\u043E\u0442\u043E \u043D\u0430 \u0441\u0432\u0435\u0442\u043B\u043E\u043C \u0444\u043E\u043D\u0435 \u0431\u0435\u0437 \u0431\u0430\u0440\u0434\u0430\u043A\u0430. \u041F\u0435\u0440\u0432\u043E\u0435 \u0444\u043E\u0442\u043E \u2014 \u044D\u0442\u043E 80% \u0443\u0441\u043F\u0435\u0445\u0430 \u043D\u0430 \u0410\u0432\u0438\u0442\u043E.' },
+      { icon: '\uD83D\uDCB0', tip: '\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u043F\u0440\u0438\u0447\u0438\u043D\u0443 \u043F\u0440\u043E\u0434\u0430\u0436\u0438 \u2014 \u044D\u0442\u043E \u043F\u043E\u0432\u044B\u0448\u0430\u0435\u0442 \u0434\u043E\u0432\u0435\u0440\u0438\u0435. "\u041F\u0440\u043E\u0434\u0430\u044E, \u0442.\u043A. \u043A\u0443\u043F\u0438\u043B \u043D\u043E\u0432\u044B\u0439" \u043B\u0443\u0447\u0448\u0435, \u0447\u0435\u043C \u043C\u043E\u043B\u0447\u0430\u043D\u0438\u0435.' },
+      { icon: '\u2705', tip: '\u0414\u043E\u0431\u0430\u0432\u044C\u0442\u0435 \u0433\u0430\u0431\u0430\u0440\u0438\u0442\u044B, \u0432\u0435\u0441 \u0438 \u0441\u043F\u043E\u0441\u043E\u0431 \u0434\u043E\u0441\u0442\u0430\u0432\u043A\u0438. \u041F\u043E\u043A\u0443\u043F\u0430\u0442\u0435\u043B\u0438 \u0410\u0432\u0438\u0442\u043E \u0446\u0435\u043D\u044F\u0442 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u0438\u043A\u0443.' }
+    ],
+    'Craigslist': [
+      { icon: '\uD83D\uDD12', tip: 'Include your general location (neighborhood, not exact address). Craigslist buyers filter by area.' },
+      { icon: '\uD83D\uDCB5', tip: 'State your price firmly. "FIRM" or "OBO" sets expectations. Avoid "make an offer" \u2014 it attracts lowballers.' },
+      { icon: '\uD83D\uDCF1', tip: 'Add a phone number or say "text preferred." Craigslist email relay is slow \u2014 fast response wins.' }
+    ]
+  };
+
+  function renderPlatformTips(platform) {
+    var tips = PLATFORM_TIPS[platform];
+    if (!tips) return '';
+    var html = '<div class="platform-tips-card">';
+    html += '<div class="platform-tips-title">\uD83D\uDCA1 ' + escapeHtml(platform) + ' Tips</div>';
+    tips.forEach(function(t) {
+      html += '<div class="platform-tip-item">';
+      html += '<span class="platform-tip-icon">' + t.icon + '</span>';
+      html += '<span>' + escapeHtml(t.tip) + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function renderComparisonBanner(previousScore, newScore) {
+    if (previousScore === null) return '';
+    var diff = newScore - previousScore;
+    var cls, icon, msg;
+    if (diff > 0) {
+      cls = 'improved';
+      icon = '\uD83D\uDE80';
+      msg = 'Improved! Score went from <strong>' + previousScore + '</strong> to <strong>' + newScore + '</strong> (+' + diff + ')';
+    } else if (diff < 0) {
+      cls = 'declined';
+      icon = '\uD83D\uDCC9';
+      msg = 'Score dropped from <strong>' + previousScore + '</strong> to <strong>' + newScore + '</strong> (' + diff + ')';
+    } else {
+      cls = '';
+      icon = '\u2194\uFE0F';
+      msg = 'Same score as before: <strong>' + newScore + '/10</strong>. Try the suggestions above!';
+    }
+    var newCls = diff > 0 ? 'roast-comparison-new-up' : (diff < 0 ? 'roast-comparison-new-down' : 'roast-comparison-new-same');
+    var html = '<div class="roast-comparison-banner ' + cls + '">';
+    html += '<span class="roast-comparison-icon">' + icon + '</span>';
+    html += '<div>';
+    html += '<div class="roast-comparison-text">' + msg + '</div>';
+    html += '<div class="roast-comparison-scores">';
+    html += '<span class="roast-comparison-old">' + previousScore + '/10</span>';
+    html += '<span class="roast-comparison-arrow">\u2192</span>';
+    html += '<span class="' + newCls + '">' + newScore + '/10</span>';
+    html += '</div>';
+    html += '</div></div>';
+    return html;
+  }
+
+  // Patch renderResult to add v8 features
+  var _origRenderResultV8 = renderResult;
+  renderResult = function(data) {
+    _origRenderResultV8(data);
+
+    var rc = $('#result-content');
+    var score = Math.max(0, Math.min(10, parseInt(data.score, 10) || 0));
+
+    // Insert comparison banner at top
+    var previousScore = getPreviousScore(state.lastListing);
+    var bannerHtml = renderComparisonBanner(previousScore, score);
+    if (bannerHtml) {
+      rc.insertAdjacentHTML('afterbegin', bannerHtml);
+    }
+
+    // Save current score for future comparisons
+    saveScoreForListing(state.lastListing, score);
+
+    // Insert platform tips after roast card
+    var tipsHtml = renderPlatformTips(state.lastPlatform);
+    var roastCard = rc.querySelector('.roast-card');
+    if (roastCard && tipsHtml) {
+      roastCard.insertAdjacentHTML('afterend', tipsHtml);
+    }
+
+    // Insert "Copy Roast Summary" button in result-actions
+    var resultActions = rc.querySelector('.result-actions');
+    if (resultActions) {
+      var summaryBtn = document.createElement('button');
+      summaryBtn.type = 'button';
+      summaryBtn.className = 'copy-summary-btn';
+      summaryBtn.id = 'copy-summary-btn';
+      summaryBtn.setAttribute('aria-label', 'Copy roast summary as text');
+      summaryBtn.textContent = 'Copy Roast Summary';
+      resultActions.insertBefore(summaryBtn, resultActions.firstChild);
+
+      summaryBtn.addEventListener('click', function() {
+        var issues = '';
+        if (Array.isArray(data.roast)) {
+          issues = data.roast.map(function(r) { return '- ' + (r.issue || '') + ': ' + (r.roast || ''); }).join('\n');
+        }
+        var summaryText = 'Score: ' + score + '/10\n';
+        summaryText += 'Verdict: ' + (data.summary || '') + '\n\n';
+        summaryText += 'Issues:\n' + issues;
+        if (data.rewrite && data.rewrite.title) {
+          summaryText += '\n\nRewrite Title: ' + data.rewrite.title;
+        }
+        if (data.rewrite && data.rewrite.description) {
+          summaryText += '\nRewrite: ' + data.rewrite.description;
+        }
+        copyText(summaryText.trim()).then(function() {
+          summaryBtn.textContent = 'Copied!';
+          summaryBtn.classList.add('copied');
+          showToast('Roast summary copied to clipboard', 'success');
+          announce('Roast summary copied');
+          setTimeout(function() {
+            summaryBtn.textContent = 'Copy Roast Summary';
+            summaryBtn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    }
   };
 
   init();

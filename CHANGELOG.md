@@ -1,5 +1,17 @@
 # Roast My Listing — Changelog
 
+## v8.0 (2026-03-29) — Roast Comparison, Platform Tips & Summary Export
+
+### Added
+- **Roast Comparison** — when re-roasting the same listing (matched by text hash), a banner shows "Improved! Score went from X to Y" or "Score dropped..." with visual before/after scores; previous scores stored in localStorage (`rml_score_history`)
+- **Platform-Specific Tips** — after each roast, a hardcoded tips card appears with 2-3 actionable tips specific to the selected platform (Etsy SEO tags, Amazon A+ content, eBay item specifics, Airbnb photo strategy, Avito trust signals, Craigslist safety)
+- **Copy Roast Summary** — "Copy Roast Summary" button in result actions; copies a text-format summary: "Score: 7/10. Verdict: ... Issues: - ... Rewrite Title: ... Rewrite: ..."
+
+### Changed
+- SW cache bumped to `roast-v8`
+
+---
+
 ## v7.0 (2026-03-29) — PWA Install, Keyboard Shortcut & Auto-Save
 
 ### Added
