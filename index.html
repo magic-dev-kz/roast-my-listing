@@ -920,6 +920,49 @@ body {
   from { transform: translateY(100%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* v10: How it works mini-guide */
+.how-it-works {
+  display: flex; gap: var(--space-6); margin-top: var(--space-8);
+  justify-content: center; text-align: center;
+}
+.how-it-works-step {
+  flex: 1; max-width: 120px;
+}
+.how-it-works-icon {
+  font-size: 1.5rem; margin-bottom: var(--space-2);
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(249,115,22,.1); border: 1px solid rgba(249,115,22,.25);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.how-it-works-num {
+  font-size: var(--text-xs); color: var(--ember); font-weight: 700;
+  display: block; margin-bottom: var(--space-1);
+}
+.how-it-works-text {
+  font-size: var(--text-xs); color: var(--text-muted); line-height: 1.4;
+}
+
+/* v10: Gemini suggestion in error */
+.error-gemini-suggestion {
+  display: flex; align-items: center; gap: var(--space-3);
+  background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.25);
+  border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.error-gemini-suggestion-text {
+  font-size: var(--text-sm); color: var(--text-muted); flex: 1;
+}
+.error-gemini-suggestion-text strong { color: var(--score-high-text); }
+.switch-gemini-btn {
+  padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm);
+  font-size: var(--text-sm); cursor: pointer; font-family: var(--font-main);
+  border: 1px solid var(--score-high); background: transparent;
+  color: var(--score-high); transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+.switch-gemini-btn:hover { background: var(--score-high); color: var(--bg); }
+.switch-gemini-btn:focus-visible { outline: 2px solid var(--score-high); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -1121,6 +1164,23 @@ body {
     <h2 class="onboarding-title">Paste your listing. Get roasted.</h2>
     <p class="onboarding-sub">AI will score your listing, tear it apart, and rewrite it to sell.</p>
     <button type="button" class="onboarding-cta" id="onboarding-cta" aria-label="Get started">Get Started</button>
+    <div class="how-it-works" aria-label="How it works">
+      <div class="how-it-works-step">
+        <div class="how-it-works-icon" aria-hidden="true">&#128273;</div>
+        <span class="how-it-works-num">1</span>
+        <span class="how-it-works-text">Get a free API key (30 sec)</span>
+      </div>
+      <div class="how-it-works-step">
+        <div class="how-it-works-icon" aria-hidden="true">&#128203;</div>
+        <span class="how-it-works-num">2</span>
+        <span class="how-it-works-text">Paste your listing</span>
+      </div>
+      <div class="how-it-works-step">
+        <div class="how-it-works-icon" aria-hidden="true">&#128293;</div>
+        <span class="how-it-works-num">3</span>
+        <span class="how-it-works-text">Get your roast</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1214,6 +1274,7 @@ body {
   var setupSubmit = $('#setup-submit');
   var setupError = $('#setup-error');
   var anthropicWarn = $('#anthropic-warn');
+  var DEFAULT_PROVIDER = 'google';
 
   function selectProvider(prov) {
     selectedProvider = prov;
@@ -1922,6 +1983,13 @@ body {
     if (raw) {
       html += '<pre class="error-raw">' + escapeHtml(raw) + '</pre>';
     }
+    // v10: Suggest switching to Google Gemini (free) if on another provider
+    if (state.provider !== 'google') {
+      html += '<div class="error-gemini-suggestion">';
+      html += '<span class="error-gemini-suggestion-text"><strong>Tip:</strong> Try with Google Gemini (free tier) — no credit card needed.</span>';
+      html += '<button type="button" class="switch-gemini-btn" id="err-switch-gemini" aria-label="Switch to Google Gemini">Switch to Gemini</button>';
+      html += '</div>';
+    }
     html += '<div class="error-actions">';
     html += '<button type="button" class="retry-btn" id="err-retry" aria-label="Try again">Try Again</button>';
     if (type === 'auth') {
@@ -1939,6 +2007,27 @@ body {
     });
     var ckBtn = $('#err-change-key');
     if (ckBtn) ckBtn.addEventListener('click', changeKey);
+    // v10: Switch to Gemini handler
+    var geminiBtn = $('#err-switch-gemini');
+    if (geminiBtn) {
+      geminiBtn.addEventListener('click', function() {
+        lsRemove('rml_provider');
+        lsRemove('rml_apikey');
+        state.provider = '';
+        state.apiKey = '';
+        selectedProvider = '';
+        keyInput.value = '';
+        providerBtns.forEach(function(b) {
+          b.classList.remove('selected');
+          b.setAttribute('aria-checked', 'false');
+        });
+        selectProvider('google');
+        showSection('setup');
+        keyInput.focus();
+        showToast('Switched to Google Gemini. Enter your free API key.', 'info');
+        announce('Switched to Google Gemini provider. Enter your API key.');
+      });
+    }
   }
 
   function getScoreColor(score) {
@@ -2267,6 +2356,10 @@ body {
       showSection('input');
     } else {
       showSection('setup');
+      // v10: Pre-select Google Gemini as default (free tier)
+      if (!selectedProvider) {
+        selectProvider(DEFAULT_PROVIDER);
+      }
       if (!lsGet('roast_onboarded') && !state.apiKey) {
         showOnboarding();
       }
