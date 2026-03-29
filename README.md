@@ -2,7 +2,9 @@
 
 **Your listing sucks. Here's why. Here's the fix.**
 
-Paste your marketplace listing → get a brutal AI critique with a score, point-by-point teardown, and a ready-to-use rewrite. Works with Etsy, eBay, Amazon, Avito, Airbnb, Craigslist — any marketplace.
+Paste your marketplace listing text (and optionally upload a product photo) → get a brutal AI critique with a score, point-by-point teardown, and a ready-to-use rewrite. Works with Etsy, eBay, Amazon, Avito, Airbnb, Craigslist — any marketplace.
+
+**[Try it free →](https://magic-dev-kz.github.io/roast-my-listing/)**
 
 ---
 
@@ -11,11 +13,12 @@ Paste your marketplace listing → get a brutal AI critique with a score, point-
 - **Score out of 10** with a sarcastic verdict ("Your listing is a cry for help")
 - **Point-by-point roast** — specific problems, not vague advice
 - **Complete rewrite** — copy-paste and relist immediately
+- **📸 Photo analysis** — upload a product photo, get AI feedback on lighting, staging, background
 - **Before/After comparison** — see your original vs the AI rewrite side by side
 - **Roast History** — all your past roasts saved locally, revisit anytime
 - **Platform-specific analysis** — Etsy SEO, Amazon bullet points, Airbnb trust signals
 - **Share card** — PNG score card for social media / messaging
-- **BYOK** (Bring Your Own Key) — works with OpenAI, Google Gemini, or Anthropic
+- **BYOK** (Bring Your Own Key) — works with OpenAI GPT-4o, Google Gemini, or Anthropic Claude
 - **Single HTML file** — no backend, no account, no tracking
 - **Works offline** — PWA with service worker
 
@@ -38,7 +41,7 @@ Paste your marketplace listing → get a brutal AI critique with a score, point-
 
 | Provider | Model | Cost per roast | Notes |
 |----------|-------|---------------|-------|
-| OpenAI | gpt-4o-mini | ~$0.01-0.03 | Best quality |
+| OpenAI | gpt-4o / gpt-4o-mini | ~$0.01-0.05 | Best quality, auto-upgrades to gpt-4o for photos |
 | Google Gemini | 2.0 Flash | Free (free tier) | Great for testing |
 | Anthropic | Claude Sonnet | ~$0.01-0.03 | CORS limitations in browser |
 
