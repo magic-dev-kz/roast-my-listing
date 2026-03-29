@@ -760,6 +760,50 @@ body {
 .oc-footer{text-align:center;padding:20px 16px 24px;margin-top:24px}
 .oc-footer a{font-size:.78rem;color:var(--text-muted,var(--text-secondary,#888));text-decoration:none;opacity:.6;transition:opacity .2s}
 .oc-footer a:hover{opacity:1}
+
+/* PWA Install Banner (v7) */
+.pwa-install-banner {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-raised) 100%);
+  border-top: 1px solid rgba(239,68,68,.2);
+  padding: var(--space-4) var(--space-6);
+  z-index: 9999;
+  animation: slideUpBanner .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 -4px 20px rgba(0,0,0,.4);
+}
+.pwa-install-banner.visible { display: flex; align-items: center; justify-content: center; gap: var(--space-4); flex-wrap: wrap; }
+.pwa-install-banner-text { font-size: var(--text-sm); color: var(--text); font-weight: 600; }
+.pwa-install-banner-text span { color: var(--text-muted); font-weight: 400; }
+.pwa-install-btn {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, var(--fire), var(--ember));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.pwa-install-btn:hover { transform: scale(1.04); box-shadow: var(--shadow-glow-fire); }
+.pwa-dismiss-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  padding: 8px;
+  transition: color .15s;
+}
+.pwa-dismiss-btn:hover { color: var(--text); }
+@keyframes slideUpBanner {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -960,6 +1004,13 @@ body {
 
 <div aria-live="polite" id="aria-announcer" class="sr-only"></div>
 <div class="toast-container" id="toast-container"></div>
+
+<!-- PWA Install Banner (v7) -->
+<div class="pwa-install-banner" id="pwa-install-banner" role="banner" aria-label="Install app">
+  <span class="pwa-install-banner-text">Install Roast My Listing <span>for offline use</span></span>
+  <button type="button" class="pwa-install-btn" id="pwa-install-btn">Install</button>
+  <button type="button" class="pwa-dismiss-btn" id="pwa-dismiss-btn" aria-label="Dismiss install prompt">Not now</button>
+</div>
 
 <script>
 (function() {
@@ -2229,6 +2280,83 @@ body {
   showSection = function(id) {
     if (id !== 'result') hideFeedbackWidget();
     _origShowSection(id);
+  };
+
+  // === v7: PWA Install Prompt ===
+  var deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    var visitCount = parseInt(lsGet('rml_visit_count') || '0', 10) + 1;
+    lsSet('rml_visit_count', String(visitCount));
+    if (visitCount >= 2 && !lsGet('rml_pwa_dismissed')) {
+      var banner = $('#pwa-install-banner');
+      if (banner) banner.classList.add('visible');
+    }
+  });
+  (function() {
+    var visitCount = parseInt(lsGet('rml_visit_count') || '0', 10) + 1;
+    lsSet('rml_visit_count', String(visitCount));
+  })();
+
+  var pwaInstallBtn = $('#pwa-install-btn');
+  var pwaDismissBtn = $('#pwa-dismiss-btn');
+  if (pwaInstallBtn) {
+    pwaInstallBtn.addEventListener('click', function() {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.then(function() {
+        deferredInstallPrompt = null;
+        var banner = $('#pwa-install-banner');
+        if (banner) banner.classList.remove('visible');
+      });
+    });
+  }
+  if (pwaDismissBtn) {
+    pwaDismissBtn.addEventListener('click', function() {
+      lsSet('rml_pwa_dismissed', '1');
+      var banner = $('#pwa-install-banner');
+      if (banner) banner.classList.remove('visible');
+    });
+  }
+
+  // === v7: Keyboard Shortcut — Ctrl/Cmd+Enter to Submit ===
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      if (document.activeElement === listingTextarea && !roastBtn.disabled) {
+        e.preventDefault();
+        roastBtn.click();
+      }
+    }
+  });
+
+  // === v7: Auto-save Draft ===
+  var draftSaveTimer = null;
+  var DRAFT_KEY = 'rml_draft';
+  // Restore draft on load
+  var savedDraft = lsGet(DRAFT_KEY);
+  if (savedDraft && listingTextarea && !listingTextarea.value) {
+    listingTextarea.value = savedDraft;
+    updateCharCounter();
+  }
+  // Save on input with 1s debounce
+  listingTextarea.addEventListener('input', function() {
+    if (draftSaveTimer) clearTimeout(draftSaveTimer);
+    draftSaveTimer = setTimeout(function() {
+      var val = listingTextarea.value;
+      if (val) {
+        lsSet(DRAFT_KEY, val);
+      } else {
+        lsRemove(DRAFT_KEY);
+      }
+    }, 1000);
+  });
+
+  // Clear draft after successful roast — patch renderResult
+  var _origRenderResultV7 = renderResult;
+  renderResult = function(data) {
+    _origRenderResultV7(data);
+    lsRemove(DRAFT_KEY);
   };
 
   init();

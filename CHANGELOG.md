@@ -1,5 +1,15 @@
 # Roast My Listing — Changelog
 
+## v7.0 (2026-03-29) — PWA Install, Keyboard Shortcut & Auto-Save
+
+### Added
+- **PWA Install Prompt** — fixed bottom banner shown after 2+ visits via `beforeinstallprompt` event; "Install" triggers native prompt, "Not now" dismisses and persists choice in localStorage (`rml_pwa_dismissed`)
+- **Keyboard Shortcut** — `Ctrl/Cmd+Enter` submits roast when textarea is focused and button is enabled
+- **Auto-Save Draft** — textarea content saved to localStorage (`rml_draft`) on input with 1s debounce; restored on page load if textarea is empty; cleared automatically after successful roast
+
+### Changed
+- SW cache bumped to `roast-v7`
+
 ## v6.0 (2026-03-29) — Skeleton Loader, Toasts & Polish
 ### Added
 - **Skeleton Loader** — 3 pulsing placeholder blocks (score circle, roast lines, rewrite block) shown during loading instead of empty space
