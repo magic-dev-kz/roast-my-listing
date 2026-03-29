@@ -1,5 +1,17 @@
 # Roast My Listing — Changelog
 
+## v9.0 (2026-03-29) — Pre-Launch Final Polish
+
+### Added
+- **Listing Length Analyzer** — real-time stats bar beneath textarea showing word count, character count, reading time (~200 wpm), and sentence count; updates on every keystroke, fades in when text is present
+- **Improvement Score Tracker** — all roast scores stored in localStorage (`rml_all_scores`) over time; history section shows an SVG sparkline chart (last 20 scores) and "Your average score: X.X/10" badge
+- **Share on Twitter/X** — "Share on X" button in result actions; opens Twitter intent URL in new tab with pre-filled tweet: "My listing just got roasted. Score: X/10. Try it: [URL]"
+
+### Changed
+- SW cache bumped to `roast-v9`
+
+---
+
 ## v8.0 (2026-03-29) — Roast Comparison, Platform Tips & Summary Export
 
 ### Added
