@@ -10,16 +10,16 @@
 <meta property="og:title" content="Roast My Listing — AI Critic">
 <meta property="og:description" content="Your listing sucks. Here's why. Here's the fix. Paste your listing, get brutally honest AI feedback + a rewrite that sells.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://magic-dev-kz.github.io/roast-my-listing/og-image.png">
-<meta property="og:url" content="https://magic-dev-kz.github.io/roast-my-listing">
+<meta property="og:image" content="https://roastmylisting.com/og-image.png">
+<meta property="og:url" content="https://roastmylisting.com">
 <meta property="og:site_name" content="Roast My Listing">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Roast My Listing — AI Critic">
 <meta name="twitter:description" content="Paste your listing. Get roasted. Get a rewrite that sells.">
-<meta name="twitter:image" content="https://magic-dev-kz.github.io/roast-my-listing/og-image.png">
+<meta name="twitter:image" content="https://roastmylisting.com/og-image.png">
 <title>Roast My Listing</title>
-<link rel="canonical" href="https://magic-dev-kz.github.io/roast-my-listing">
+<link rel="canonical" href="https://roastmylisting.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -89,6 +89,7 @@ body {
 @media (min-width: 1024px) { .container { max-width: 720px; } }
 
 .header {
+  position: sticky; top: 0; z-index: 10;
   display: flex; align-items: center; justify-content: space-between;
   padding: var(--space-4) var(--space-4); margin-bottom: var(--space-6);
   margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4));
@@ -248,7 +249,7 @@ body {
   transition: left .5s ease; pointer-events: none;
 }
 .cta-btn:hover:not(:disabled)::before { left: 120%; }
-.cta-btn:hover:not(:disabled) { transform: scale(1.02); box-shadow: 0 0 30px rgba(239,68,68,.5), 0 0 60px rgba(249,115,22,.2); }
+.cta-btn:hover:not(:disabled) { transform: translateY(-1px) scale(1.02); box-shadow: var(--shadow-glow-fire), 0 0 30px rgba(239,68,68,.5), 0 0 60px rgba(249,115,22,.2); }
 .cta-btn:active:not(:disabled) { transform: scale(0.95); }
 .cta-btn:disabled { opacity: .4; box-shadow: none; cursor: not-allowed; transform: none; }
 .cta-btn:disabled::before { display: none; }
@@ -552,6 +553,21 @@ body {
 @media (max-width: 400px) {
   .comparison-wrap { grid-template-columns: 1fr; }
   .history-item { padding: var(--space-2) var(--space-3); }
+}
+.openclaw-footer {
+  text-align: center;
+  padding: 24px 16px;
+  margin-top: 32px;
+}
+.openclaw-footer a {
+  font-size: 0.8rem;
+  color: var(--text-muted, #888);
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.openclaw-footer a:hover {
+  opacity: 1;
 }
 </style>
 </head>
@@ -1645,5 +1661,8 @@ body {
   init();
 })();
 </script>
+<div class="openclaw-footer">
+  <a href="https://magic-dev-kz.github.io/openclaw/" target="_blank" rel="noopener">More free tools → OpenClaw</a>
+</div>
 </body>
 </html>
