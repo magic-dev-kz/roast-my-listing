@@ -3002,8 +3002,52 @@ body {
     statReading.textContent = readingStr;
     statSentences.textContent = sentenceCount;
 
+    // v15: Word count target by platform
+    updateWordCountTarget(wordCount);
+
     listingStatsBar.classList.toggle('visible', charCount > 0);
   }
+
+  // v15: Word Count Target by Platform
+  var WORD_COUNT_TARGETS = {
+    'Etsy': { min: 300, max: 500, label: 'Etsy optimal' },
+    'Amazon': { min: 200, max: 400, label: 'Amazon optimal' },
+    'eBay': { min: 150, max: 300, label: 'eBay optimal' },
+    'Airbnb': { min: 250, max: 500, label: 'Airbnb optimal' },
+    'Avito': { min: 100, max: 300, label: 'Avito optimal' },
+    'Craigslist': { min: 80, max: 200, label: 'Craigslist optimal' },
+    'Other': { min: 150, max: 400, label: 'Recommended' }
+  };
+  var _wordTargetEl = null;
+
+  function updateWordCountTarget(wordCount) {
+    var platform = platformSelect.value;
+    var target = WORD_COUNT_TARGETS[platform] || WORD_COUNT_TARGETS['Other'];
+    if (wordCount === 0) {
+      if (_wordTargetEl) _wordTargetEl.style.display = 'none';
+      return;
+    }
+    if (!_wordTargetEl) {
+      _wordTargetEl = document.createElement('div');
+      _wordTargetEl.style.cssText = 'margin-top:8px;font-size:.8rem;';
+      listingStatsBar.parentNode.insertBefore(_wordTargetEl, listingStatsBar.nextSibling);
+    }
+    _wordTargetEl.style.display = '';
+    var pct = Math.min(100, Math.round((wordCount / target.max) * 100));
+    var barColor = wordCount < target.min ? 'var(--ember)' : wordCount <= target.max ? 'var(--score-high)' : 'var(--warm)';
+    var status = wordCount < target.min ? (target.min - wordCount) + ' words to go' : wordCount <= target.max ? 'In range!' : (wordCount - target.max) + ' words over target';
+    _wordTargetEl.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
+      '<span style="color:var(--text-muted)">' + target.label + ': ' + target.min + '-' + target.max + ' words</span>' +
+      '<span style="color:' + barColor + ';font-weight:600">' + status + '</span></div>' +
+      '<div style="height:4px;border-radius:2px;background:var(--surface-raised);overflow:hidden">' +
+      '<div style="width:' + pct + '%;height:100%;border-radius:2px;background:' + barColor + ';transition:width .3s ease"></div></div>';
+  }
+
+  platformSelect.addEventListener('change', function() {
+    var words = listingTextarea.value.trim() ? listingTextarea.value.trim().split(/\s+/).length : 0;
+    updateWordCountTarget(words);
+  });
 
   listingTextarea.addEventListener('input', updateListingStats);
   listingTextarea.addEventListener('focus', function() {

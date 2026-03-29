@@ -1,5 +1,15 @@
 # Roast My Listing — Changelog
 
+## v15.0 (2026-03-29) — Word Count Target
+
+### Added
+- **Word count target by platform** -- shows recommended word count range per platform (Etsy: 300-500, Amazon: 200-400, eBay: 150-300, Airbnb: 250-500, Avito: 100-300, Craigslist: 80-200) with a progress bar toward the target
+- Color-coded: orange (below target), green (in range), yellow (over target)
+- Updates live as user types; responds to platform dropdown changes
+- SW cache bumped to `roast-v15`
+
+---
+
 ## v14.0 (2026-03-29) — Auto-detect Platform
 
 ### Added
