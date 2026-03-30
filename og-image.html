@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Roast My Listing OG Image</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  width: 1200px; height: 630px; overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #1C1917;
+  position: relative;
+}
+
+/* Subtle radial gradient */
+body::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1200px; height: 1200px;
+  background: radial-gradient(circle 600px, #292524, #1C1917);
+  opacity: 0.5;
+  z-index: 0;
+}
+
+/* Top decorative line */
+.top-line {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1200px; height: 3px;
+  background: linear-gradient(to right, #EF4444, #F97316 50%, #EF4444);
+  z-index: 10;
+}
+
+/* Score — big 4 */
+.score-big {
+  position: absolute;
+  left: 120px; top: 340px;
+  font-weight: 900;
+  font-size: 220px;
+  color: #EF4444;
+  line-height: 1;
+  text-shadow: 0 0 60px rgba(239,68,68,0.3);
+  z-index: 2;
+  transform: translateY(-100%);
+}
+
+.score-slash {
+  position: absolute;
+  left: 310px; top: 340px;
+  font-weight: 300;
+  font-size: 80px;
+  color: #57534E;
+  line-height: 1;
+  z-index: 2;
+  transform: translateY(-100%);
+}
+
+/* Subtitle under score */
+.score-subtitle {
+  position: absolute;
+  left: 120px; top: 380px;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 20px;
+  color: #F97316;
+  z-index: 2;
+}
+
+/* Mini progress bars */
+.bars {
+  position: absolute;
+  left: 120px; top: 420px;
+  z-index: 2;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.bar-label {
+  width: 90px;
+  font-weight: 400;
+  font-size: 12px;
+  color: #A8A29E;
+}
+
+.bar-track {
+  width: 180px; height: 6px;
+  background: #292524;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.bar-fill.photos { width: 30%; background: #EF4444; }
+.bar-fill.description { width: 50%; background: #F97316; }
+.bar-fill.price { width: 20%; background: #EF4444; }
+
+/* Right text block */
+.text-block {
+  position: absolute;
+  left: 580px; top: 150px;
+  z-index: 2;
+}
+
+.product-name {
+  font-weight: 800;
+  font-size: 44px;
+  color: #FAFAF9;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  margin-top: 20px;
+  line-height: 34px;
+}
+
+.tagline-1 {
+  font-weight: 400;
+  font-size: 22px;
+  color: #D6D3D1;
+}
+
+.tagline-2 {
+  font-weight: 400;
+  font-size: 22px;
+  color: #F97316;
+}
+
+/* CTA button */
+.cta {
+  position: absolute;
+  left: 580px; top: 340px;
+  width: 280px; height: 48px;
+  border: 1.5px solid #EF4444;
+  background: transparent;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.cta-text {
+  font-weight: 500;
+  font-size: 15px;
+  color: #EF4444;
+}
+
+/* Sparks */
+.spark {
+  position: absolute;
+  border-radius: 50%;
+  background: #F97316;
+  z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<div class="top-line"></div>
+
+<div class="score-big">4</div>
+<div class="score-slash">/10</div>
+
+<div class="score-subtitle">Ouch. That's painful.</div>
+
+<div class="bars">
+  <div class="bar-row">
+    <span class="bar-label">Photos</span>
+    <div class="bar-track"><div class="bar-fill photos"></div></div>
+  </div>
+  <div class="bar-row">
+    <span class="bar-label">Description</span>
+    <div class="bar-track"><div class="bar-fill description"></div></div>
+  </div>
+  <div class="bar-row">
+    <span class="bar-label">Price</span>
+    <div class="bar-track"><div class="bar-fill price"></div></div>
+  </div>
+</div>
+
+<div class="text-block">
+  <div class="product-name">Roast My Listing</div>
+  <div class="tagline">
+    <div class="tagline-1">Your listing sucks.</div>
+    <div class="tagline-2">Here's why. Here's the fix.</div>
+  </div>
+</div>
+
+<div class="cta">
+  <span class="cta-text">Paste your listing. Get roasted.</span>
+</div>
+
+<!-- Decorative sparks -->
+<div class="spark" style="left:150px;top:80px;width:6px;height:6px;opacity:0.3"></div>
+<div class="spark" style="left:890px;top:520px;width:4px;height:4px;opacity:0.2"></div>
+<div class="spark" style="left:1050px;top:100px;width:8px;height:8px;opacity:0.15"></div>
+<div class="spark" style="left:400px;top:560px;width:5px;height:5px;opacity:0.35"></div>
+<div class="spark" style="left:700px;top:70px;width:6px;height:6px;opacity:0.25"></div>
+<div class="spark" style="left:200px;top:550px;width:4px;height:4px;opacity:0.4"></div>
+<div class="spark" style="left:1100px;top:400px;width:5px;height:5px;opacity:0.2"></div>
+
+</body>
+</html>

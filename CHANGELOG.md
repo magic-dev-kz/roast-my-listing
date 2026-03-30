@@ -1,5 +1,10 @@
 # Roast My Listing — Changelog
 
+## v19.0 (2026-03-29) — Error Handling Hardening
+
+- **JSON.parse guard**: User-friendly error message when AI response is garbled instead of raw dump
+- SW cache bumped to `roast-v19`
+
 ## v18.0 (2026-03-29) — SEO / Meta Pass
 
 - **robots meta**: Added `<meta name="robots" content="index, follow">`

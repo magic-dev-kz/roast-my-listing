@@ -2142,7 +2142,7 @@ body {
       try {
         parsed = JSON.parse(rawContent);
       } catch(e) {
-        showError('off-script', rawContent);
+        showError('generic', 'Oops! The AI response was garbled and couldn\u2019t be read. Please try again \u2014 this usually fixes itself.');
         return;
       }
       if (!parsed.roast || parsed.score === undefined || parsed.score === null || !parsed.rewrite || !parsed.summary) {
@@ -3360,7 +3360,7 @@ body {
         stopLoadingPhrases();
         var parsed;
         try { parsed = JSON.parse(rawContent); } catch(e) {
-          showError('off-script', rawContent);
+          showError('generic', 'Oops! The AI response was garbled and couldn\u2019t be read. Please try again \u2014 this usually fixes itself.');
           return;
         }
         if (!parsed.listing_a || !parsed.listing_b) {
