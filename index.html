@@ -110,6 +110,17 @@ body {
   text-transform: uppercase; letter-spacing: 1px;
   text-shadow: 0 0 20px rgba(239,68,68,.3);
 }
+.header-controls { display: flex; align-items: center; gap: var(--space-2); }
+.lang-toggle {
+  background: none; border: 1px solid var(--surface-raised); color: var(--text-muted);
+  padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); cursor: pointer;
+  font-size: var(--text-xs); font-family: var(--font-mono); font-weight: 600;
+  transition: border-color .15s, color .15s; letter-spacing: .5px;
+}
+.lang-toggle:hover { border-color: var(--ember); color: var(--text); }
+.lang-toggle:active { transform: scale(0.95); }
+.lang-toggle:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+.lang-toggle .lang-active { color: var(--ember); }
 .gear-btn {
   background: none; border: 1px solid var(--surface-raised); color: var(--text-muted);
   padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); cursor: pointer;
@@ -1126,25 +1137,25 @@ body {
   <!-- SETUP SCREEN -->
   <section class="section active" id="sec-setup" role="region" aria-label="API Key Setup">
     <div class="setup-wrap">
-      <h1 class="hero-title">Roast My Listing</h1>
-      <p class="hero-sub">Paste your listing. Get brutally honest feedback + a rewrite that actually sells.</p>
+      <h1 class="hero-title" data-i18n="heroTitle">Roast My Listing</h1>
+      <p class="hero-sub" data-i18n="heroSub">Paste your listing. Get brutally honest feedback + a rewrite that actually sells.</p>
       <div class="setup-card" role="form" aria-label="API Key form">
-        <p class="setup-label">To get started, choose your AI provider:</p>
+        <p class="setup-label" data-i18n="setupLabel">To get started, choose your AI provider:</p>
         <div class="provider-btns" role="radiogroup" aria-label="AI Provider">
           <button type="button" class="provider-btn" data-provider="openai" role="radio" aria-checked="false" tabindex="0">OpenAI</button>
           <button type="button" class="provider-btn" data-provider="google" role="radio" aria-checked="false" tabindex="-1">Google</button>
           <button type="button" class="provider-btn" data-provider="anthropic" role="radio" aria-checked="false" tabindex="-1">Anthropic</button>
         </div>
         <div class="anthropic-warn" id="anthropic-warn" role="alert">
-          <strong>Note:</strong> Anthropic API does not support browser (CORS) requests. Your roasts will fail unless you route through a CORS proxy. We recommend OpenAI or Google for hassle-free usage.
+          <strong data-i18n="noteLabel">Note:</strong> <span data-i18n="anthropicWarnText">Anthropic API does not support browser (CORS) requests. Your roasts will fail unless you route through a CORS proxy. We recommend OpenAI or Google for hassle-free usage.</span>
         </div>
-        <label class="key-label" for="key-input">API Key</label>
+        <label class="key-label" for="key-input" data-i18n="apiKeyLabel">API Key</label>
         <div class="key-input-wrap">
           <input type="password" id="key-input" class="key-input" placeholder="sk-... or AIza..." autocomplete="off" spellcheck="false" aria-required="true">
           <button type="button" class="eye-btn" id="eye-btn" aria-label="Toggle key visibility">&#128065;</button>
         </div>
-        <p class="privacy-note"><span class="lock-icon" aria-hidden="true">&#128274;</span> Your key stays in your browser. We never see it.</p>
-        <button type="button" class="how-to-link" id="how-to-toggle" aria-expanded="false" aria-controls="how-to-content">How to get a key?</button>
+        <p class="privacy-note"><span class="lock-icon" aria-hidden="true">&#128274;</span> <span data-i18n="privacyNote">Your key stays in your browser. We never see it.</span></p>
+        <button type="button" class="how-to-link" id="how-to-toggle" aria-expanded="false" aria-controls="how-to-content" data-i18n="howToGetKey">How to get a key?</button>
         <div class="how-to-content" id="how-to-content" role="region" aria-label="Instructions for getting API key">
           <div id="how-to-openai" style="display:none">
             <strong>OpenAI:</strong>
@@ -1174,7 +1185,7 @@ body {
             <p class="how-to-cost">Cost: ~$0.01 per roast (requires CORS proxy)</p>
           </div>
         </div>
-        <button type="button" class="setup-submit" id="setup-submit" disabled aria-label="Start roasting">Start Roasting</button>
+        <button type="button" class="setup-submit" id="setup-submit" disabled aria-label="Start roasting" data-i18n="startRoasting">Start Roasting</button>
         <p class="setup-error" id="setup-error" role="alert" aria-live="polite"></p>
       </div>
     </div>
@@ -1183,8 +1194,11 @@ body {
   <!-- INPUT SCREEN -->
   <section class="section" id="sec-input" role="region" aria-label="Listing Input">
     <header class="header">
-      <div class="header-title">Roast My Listing</div>
-      <button type="button" class="gear-btn" id="gear-btn" aria-label="Settings"><span class="gear-icon" aria-hidden="true">&#9881;</span> Settings</button>
+      <div class="header-title" data-i18n="headerTitle">Roast My Listing</div>
+      <div class="header-controls">
+        <button type="button" class="lang-toggle" id="lang-toggle" aria-label="Toggle language"><span class="lang-active">EN</span> | RU</button>
+        <button type="button" class="gear-btn" id="gear-btn" aria-label="Settings"><span class="gear-icon" aria-hidden="true">&#9881;</span> <span data-i18n="settingsBtn">Settings</span></button>
+      </div>
     </header>
     <div class="settings-dropdown" id="settings-dropdown" role="region" aria-label="Settings">
       <p class="settings-info">Provider: <strong id="settings-provider"></strong></p>
@@ -1203,7 +1217,7 @@ body {
       </div>
     </div>
     <div class="input-section">
-      <label class="field-label" for="platform-select">Platform</label>
+      <label class="field-label" for="platform-select" data-i18n="platformLabel">Platform</label>
       <select id="platform-select" class="platform-select" aria-label="Select marketplace platform">
         <option value="Amazon">Amazon</option>
         <option value="Avito">Avito</option>
@@ -1213,13 +1227,13 @@ body {
         <option value="Craigslist">Craigslist</option>
         <option value="Other">Other</option>
       </select>
-      <label class="field-label">Product Photo <span style="color:var(--text-dim);font-weight:400">(optional)</span></label>
+      <label class="field-label"><span data-i18n="photoLabel">Product Photo</span> <span style="color:var(--text-dim);font-weight:400" data-i18n="optionalLabel">(optional)</span></label>
       <div class="photo-upload-zone" id="photo-upload-zone" role="button" tabindex="0" aria-label="Upload product photo">
         <div id="photo-empty-state">
           <div class="photo-upload-icon" aria-hidden="true">&#128247;</div>
-          <p class="photo-upload-text">Drag &amp; drop a photo here, or</p>
-          <button type="button" class="photo-upload-btn" id="photo-upload-btn" aria-label="Upload photo">Upload Photo</button>
-          <p class="photo-upload-hint">JPG, PNG, WebP &bull; Max 5 MB</p>
+          <p class="photo-upload-text" data-i18n="photoDragDrop">Drag &amp; drop a photo here, or</p>
+          <button type="button" class="photo-upload-btn" id="photo-upload-btn" aria-label="Upload photo" data-i18n="uploadPhotoBtn">Upload Photo</button>
+          <p class="photo-upload-hint" data-i18n="photoHint">JPG, PNG, WebP &bull; Max 5 MB</p>
         </div>
         <div id="photo-preview-state" style="display:none">
           <div class="photo-preview-wrap">
@@ -1235,7 +1249,7 @@ body {
       </div>
 
       <div class="example-chips-wrap">
-        <p class="example-chips-label">Try an example:</p>
+        <p class="example-chips-label" data-i18n="tryExample">Try an example:</p>
         <div class="example-chips" id="example-chips">
           <button type="button" class="example-chip" data-example="etsy" aria-label="Try Etsy example">Etsy Ring</button>
           <button type="button" class="example-chip" data-example="airbnb" aria-label="Try Airbnb example">Airbnb Apt</button>
@@ -1245,31 +1259,31 @@ body {
       </div>
 
       <!-- v12: Roast Intensity Slider -->
-      <label class="field-label" for="intensity-slider">Roast Intensity</label>
+      <label class="field-label" for="intensity-slider" data-i18n="roastIntensityLabel">Roast Intensity</label>
       <div class="intensity-wrap">
         <input type="range" id="intensity-slider" class="intensity-slider" min="1" max="5" value="3" step="1" aria-label="Roast intensity from gentle to savage">
         <div class="intensity-labels">
-          <span class="intensity-label">Gentle</span>
-          <span class="intensity-label">Mild</span>
-          <span class="intensity-label">Medium</span>
-          <span class="intensity-label">Spicy</span>
-          <span class="intensity-label">Savage</span>
+          <span class="intensity-label" data-i18n="intensityGentle">Gentle</span>
+          <span class="intensity-label" data-i18n="intensityMild">Mild</span>
+          <span class="intensity-label" data-i18n="intensityMedium">Medium</span>
+          <span class="intensity-label" data-i18n="intensitySpicy">Spicy</span>
+          <span class="intensity-label" data-i18n="intensitySavage">Savage</span>
         </div>
         <div class="intensity-current" id="intensity-current">Medium</div>
       </div>
 
       <!-- v12: Compare 2 Listings Toggle -->
       <div class="compare-toggle-wrap">
-        <button type="button" class="compare-toggle-btn" id="compare-toggle-btn" aria-pressed="false">Compare 2 Listings</button>
+        <button type="button" class="compare-toggle-btn" id="compare-toggle-btn" aria-pressed="false" data-i18n="compare2Listings">Compare 2 Listings</button>
       </div>
 
-      <label class="field-label" for="listing-textarea">Your listing</label>
-      <textarea id="listing-textarea" class="listing-textarea" placeholder="Paste your listing text here..." maxlength="10000" aria-describedby="char-counter"></textarea>
+      <label class="field-label" for="listing-textarea" data-i18n="yourListingLabel">Your listing</label>
+      <textarea id="listing-textarea" class="listing-textarea" data-i18n-placeholder="listingPlaceholder" placeholder="Paste your listing text here..." maxlength="10000" aria-describedby="char-counter"></textarea>
 
       <!-- v12: Second listing textarea (hidden by default) -->
       <div id="listing-2-wrap" class="listing-2-wrap" style="display:none">
-        <label class="field-label" for="listing-textarea-2">Second listing</label>
-        <textarea id="listing-textarea-2" class="listing-textarea" placeholder="Paste the second listing here..." maxlength="10000"></textarea>
+        <label class="field-label" for="listing-textarea-2" data-i18n="secondListingLabel">Second listing</label>
+        <textarea id="listing-textarea-2" class="listing-textarea" data-i18n-placeholder="secondListingPlaceholder" placeholder="Paste the second listing here..." maxlength="10000"></textarea>
       </div>
       <div class="listing-stats-bar" id="listing-stats-bar" aria-live="polite">
         <span class="listing-stat"><span class="listing-stat-icon" aria-hidden="true">&#128221;</span> <span class="listing-stat-val" id="stat-words">0</span> words</span>
@@ -1282,6 +1296,7 @@ body {
       <div class="history-section" id="history-section" hidden>
         <div class="history-header">
           <h2 class="history-title">Recent Roasts</h2>
+          <button type="button" class="history-clear-btn" id="history-export-btn" aria-label="Export roast history as JSON" style="border-color:var(--ember)">&#128229; Export</button>
           <button type="button" class="history-clear-btn" id="history-clear-btn" aria-label="Clear roast history">Clear History</button>
         </div>
         <div class="history-list" id="history-list" role="list" aria-label="Recent roasts"></div>
@@ -1316,8 +1331,11 @@ body {
   <!-- RESULT SCREEN -->
   <section class="section" id="sec-result" role="region" aria-label="Roast Result" tabindex="-1">
     <header class="header">
-      <div class="header-title">Roast My Listing</div>
-      <button type="button" class="gear-btn" id="gear-btn-result" aria-label="Settings"><span class="gear-icon" aria-hidden="true">&#9881;</span> Settings</button>
+      <div class="header-title" data-i18n="headerTitle">Roast My Listing</div>
+      <div class="header-controls">
+        <button type="button" class="lang-toggle" id="lang-toggle-result" aria-label="Toggle language"><span class="lang-active">EN</span> | RU</button>
+        <button type="button" class="gear-btn" id="gear-btn-result" aria-label="Settings"><span class="gear-icon" aria-hidden="true">&#9881;</span> <span data-i18n="settingsBtn">Settings</span></button>
+      </div>
     </header>
     <div class="settings-dropdown" id="settings-dropdown-result" role="region" aria-label="Settings">
       <p class="settings-info">Provider: <strong id="settings-provider-result"></strong></p>
@@ -2023,6 +2041,22 @@ body {
     clearHistory();
     announce('Roast history cleared');
   });
+
+  // v22: Export roast history as JSON backup
+  var historyExportBtn = $('#history-export-btn');
+  if (historyExportBtn) {
+    historyExportBtn.addEventListener('click', function() {
+      var hist = getHistory();
+      if (!hist.length) { showToast('No history to export'); return; }
+      var data = { app: 'Roast My Listing', version: '22.0', exported: new Date().toISOString(), history: hist };
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'roast-history-backup.json'; a.click();
+      setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+      showToast('History exported');
+    });
+  }
 
   function doRoast(text, platform) {
     showSection('loading');
@@ -3065,6 +3099,9 @@ body {
     // v15: Word count target by platform
     updateWordCountTarget(wordCount);
 
+    // v21: Title character limit warning
+    updateTitleCharLimit();
+
     listingStatsBar.classList.toggle('visible', charCount > 0);
   }
 
@@ -3107,7 +3144,66 @@ body {
   platformSelect.addEventListener('change', function() {
     var words = listingTextarea.value.trim() ? listingTextarea.value.trim().split(/\s+/).length : 0;
     updateWordCountTarget(words);
+    updateTitleCharLimit();
   });
+
+  // v21: Listing character limit warning per platform
+  var PLATFORM_TITLE_LIMITS = {
+    'Etsy': { title: 140, desc: 'Etsy title' },
+    'Amazon': { title: 200, desc: 'Amazon title' },
+    'eBay': { title: 80, desc: 'eBay title' },
+    'Airbnb': { title: 50, desc: 'Airbnb listing name' },
+    'Avito': { title: 50, desc: 'Avito title' },
+    'Craigslist': { title: 70, desc: 'Craigslist title' },
+    'Other': { title: 150, desc: 'Title' }
+  };
+  var _titleLimitEl = null;
+
+  function updateTitleCharLimit() {
+    var platform = platformSelect.value;
+    var limit = PLATFORM_TITLE_LIMITS[platform] || PLATFORM_TITLE_LIMITS['Other'];
+    var text = listingTextarea.value;
+    // Extract first line as "title" (text before first newline or period)
+    var firstLine = text.split(/[\n.]/)[0].trim();
+    var len = firstLine.length;
+
+    if (len === 0) {
+      if (_titleLimitEl) _titleLimitEl.style.display = 'none';
+      return;
+    }
+
+    if (!_titleLimitEl) {
+      _titleLimitEl = document.createElement('div');
+      _titleLimitEl.style.cssText = 'margin-top:6px;font-size:.78rem;padding:6px 10px;border-radius:8px;transition:all .3s ease;';
+      if (_wordTargetEl && _wordTargetEl.parentNode) {
+        _wordTargetEl.parentNode.insertBefore(_titleLimitEl, _wordTargetEl.nextSibling);
+      } else {
+        listingStatsBar.parentNode.insertBefore(_titleLimitEl, listingStatsBar.nextSibling);
+      }
+    }
+    _titleLimitEl.style.display = '';
+    var remaining = limit.title - len;
+    var color, bg, icon, msg;
+    if (remaining > 20) {
+      color = 'var(--text-muted)';
+      bg = 'transparent';
+      icon = '';
+      msg = limit.desc + ': ' + len + ' / ' + limit.title + ' chars';
+    } else if (remaining >= 0) {
+      color = 'var(--warm)';
+      bg = 'rgba(251,191,36,.08)';
+      icon = '\u26A0 ';
+      msg = icon + limit.desc + ': ' + remaining + ' chars left';
+    } else {
+      color = 'var(--fire)';
+      bg = 'rgba(239,68,68,.08)';
+      icon = '\u274C ';
+      msg = icon + limit.desc + ': ' + Math.abs(remaining) + ' chars over limit (' + limit.title + ')';
+    }
+    _titleLimitEl.style.color = color;
+    _titleLimitEl.style.background = bg;
+    _titleLimitEl.textContent = msg;
+  }
 
   listingTextarea.addEventListener('input', updateListingStats);
   listingTextarea.addEventListener('focus', function() {

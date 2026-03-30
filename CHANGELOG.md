@@ -1,5 +1,15 @@
 # Roast My Listing — Changelog
 
+## v22.0 (2026-03-29) — Data Portability
+
+- **Export roast history as JSON backup**: "Export" button in Recent Roasts section downloads full roast history (scores, listings, results, timestamps) as a portable JSON file
+- SW cache bumped to `roast-v22`
+
+## v21.0 (2026-03-29) — Title Character Limit Warning
+
+- **Title character limit warning**: Extracts first line of listing as "title" and shows per-platform character limit (Etsy=140, Amazon=200, eBay=80, Airbnb=50, Avito=50, Craigslist=70); color-coded: muted (safe), yellow (close), red (over limit); updates live on input and platform change
+- SW cache bumped to `roast-v21`
+
 ## v20.0 (2026-03-29) — Print Styles
 
 - **Print stylesheet**: `@media print` rules — hides nav, buttons, overlays, footer; shows only score + roast items + rewrite; white background, black text for ink saving; page breaks on roast items
