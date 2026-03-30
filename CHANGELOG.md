@@ -1,5 +1,11 @@
 # Roast My Listing — Changelog
 
+## v18.0 (2026-03-29) — SEO / Meta Pass
+
+- **robots meta**: Added `<meta name="robots" content="index, follow">`
+- **apple-touch-icon**: Inline SVG data URL with product emoji (🔥)
+- SW cache bumped to `roast-v18`
+
 ## v17.0 (2026-03-29) — Accessibility Pass
 
 - **Skip link**: "Skip to main content" link for keyboard users
