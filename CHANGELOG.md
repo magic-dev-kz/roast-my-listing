@@ -1,5 +1,12 @@
 # Roast My Listing — Changelog
 
+## v17.0 (2026-03-29) — Accessibility Pass
+
+- **Skip link**: "Skip to main content" link for keyboard users
+- **Platform select**: Added `aria-label="Select marketplace platform"`
+- **Score display**: Added `role="status"` + `aria-live="polite"` for screen reader announcements
+- SW cache bumped to `roast-v17`
+
 ## v16.0 (2026-03-29) — Loading Tips
 
 - **Loading Tips**: Rotating useful tips shown during AI analysis (e.g., "Did you know? Roast works with product photos too!")
