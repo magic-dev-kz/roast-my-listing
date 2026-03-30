@@ -1,6 +1,12 @@
 # Roast My Listing — Changelog
 
 
+
+## v24.0 (2026-03-29) — SW Cache Bump
+
+- SW cache bumped to `roast-v24`
+
+---
 ## v23.0 (2026-03-29) — Deferred Font Loading
 
 - **Non-blocking Google Fonts**: Font CSS changed from render-blocking `<link rel="stylesheet">` to `<link rel="preload" ... onload>` with `<noscript>` fallback — improves First Contentful Paint
