@@ -1,5 +1,10 @@
 # Roast My Listing — Changelog
 
+## v20.0 (2026-03-29) — Print Styles
+
+- **Print stylesheet**: `@media print` rules — hides nav, buttons, overlays, footer; shows only score + roast items + rewrite; white background, black text for ink saving; page breaks on roast items
+- SW cache bumped to `roast-v20`
+
 ## v19.0 (2026-03-29) — Error Handling Hardening
 
 - **JSON.parse guard**: User-friendly error message when AI response is garbled instead of raw dump
