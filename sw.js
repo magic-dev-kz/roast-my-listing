@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'roast-v22';
+const CACHE_NAME = 'roast-v23';
 const ASSETS = [
   './',
   './index.html',

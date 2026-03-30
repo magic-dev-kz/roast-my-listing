@@ -1,5 +1,12 @@
 # Roast My Listing — Changelog
 
+
+## v23.0 (2026-03-29) — Deferred Font Loading
+
+- **Non-blocking Google Fonts**: Font CSS changed from render-blocking `<link rel="stylesheet">` to `<link rel="preload" ... onload>` with `<noscript>` fallback — improves First Contentful Paint
+- SW cache bumped to `roast-v23`
+
+---
 ## v22.0 (2026-03-29) — Data Portability
 
 - **Export roast history as JSON backup**: "Export" button in Recent Roasts section downloads full roast history (scores, listings, results, timestamps) as a portable JSON file
