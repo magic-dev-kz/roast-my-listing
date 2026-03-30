@@ -2649,10 +2649,17 @@ body {
         showOnboarding();
       }
     }
-    renderHistory();
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(function() { /* silent */ });
-    }
+    // v26: Defer non-critical init to not block first paint
+    var _deferInit = function(fn) {
+      if ('requestIdleCallback' in window) { requestIdleCallback(fn); }
+      else { setTimeout(fn, 100); }
+    };
+    _deferInit(function() { renderHistory(); });
+    _deferInit(function() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(function() { /* silent */ });
+      }
+    });
   }
 
   // === Feedback Widget Logic ===
@@ -3587,7 +3594,9 @@ body {
   }
 
   init();
-  updateFeedbackStats();
+  // v26: Defer non-critical feedback stats to not block first paint
+  if ('requestIdleCallback' in window) { requestIdleCallback(function() { updateFeedbackStats(); }); }
+  else { setTimeout(function() { updateFeedbackStats(); }, 100); }
 })();
 </script>
 <div class="oc-footer"><a href="https://magic-dev-kz.github.io/openclaw/" target="_blank" rel="noopener">More free tools → OpenClaw</a></div>
